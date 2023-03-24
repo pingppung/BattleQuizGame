@@ -1,7 +1,11 @@
 // JavaObjClient.java
-// ObjecStream ����ϴ� ä�� Client
+// ObjecStream 사용하는 채팅 Client
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Graphics;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -9,6 +13,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -45,54 +50,98 @@ public class JavaGameClientMain extends JFrame {
 	 */
 	public JavaGameClientMain() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 254, 321);
-		contentPane = new JPanel();
+		setBounds(100, 100, 700, 540);
+		ImageIcon face =  new ImageIcon("src/images/Background.png");
+		contentPane = new JPanel() {
+			 public void paintComponent(Graphics g) {
+	               Dimension d = getSize();
+	               g.drawImage(face.getImage(), 0, 0, d.width, d.height, this);
+	               
+	               setOpaque(false); //그림을 표시하게 설정,투명하게 조절
+	               super.paintComponent(g);
+			 }
+		};
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
+		
+		//logo
+        ImageIcon logo = new ImageIcon("src/images/quiz.gif");
+             
+         JPanel logo_panel = new JPanel() {
+           public void paintComponent(Graphics g) {
+              Dimension d = getSize();
+              g.drawImage(logo.getImage(), 0, 0, d.width, d.height, this);
+              
+              setOpaque(false); //그림을 표시하게 설정,투명하게 조절
+              super.paintComponent(g);
+           }
+        };
+        logo_panel.setBounds(250, 100, 200, 150);
+        contentPane.add(logo_panel);
+		
+		//username
 		JLabel lblNewLabel = new JLabel("User Name");
-		lblNewLabel.setBounds(12, 39, 82, 33);
+		lblNewLabel.setBackground(Color.WHITE);
+		//lblNewLabel.setFont(new Font("나눔스퀘어", Font.BOLD, 10));
+		lblNewLabel.setForeground(Color.BLACK);
+		lblNewLabel.setBounds(251, 287, 63, 24);
 		contentPane.add(lblNewLabel);
 		
 		txtUserName = new JTextField();
-		txtUserName.setHorizontalAlignment(SwingConstants.CENTER);
-		txtUserName.setBounds(101, 39, 116, 33);
+		txtUserName.setFont(new Font("나눔스퀘어", Font.PLAIN, 12));
+		txtUserName.setBackground(Color.WHITE);
+		txtUserName.setHorizontalAlignment(SwingConstants.RIGHT);
+		txtUserName.setBounds(318, 288, 120, 24);
 		contentPane.add(txtUserName);
 		txtUserName.setColumns(10);
 		
+		
+		//ip
 		JLabel lblIpAddress = new JLabel("IP Address");
-		lblIpAddress.setBounds(12, 100, 82, 33);
+		lblIpAddress.setBackground(Color.WHITE);
+		lblIpAddress.setForeground(Color.BLACK);
+		lblIpAddress.setBounds(251, 311, 63, 24);
 		contentPane.add(lblIpAddress);
 		
 		txtIpAddress = new JTextField();
-		txtIpAddress.setHorizontalAlignment(SwingConstants.CENTER);
-		txtIpAddress.setText("127.0.0.1");
-		txtIpAddress.setColumns(10);
-		txtIpAddress.setBounds(101, 100, 116, 33);
-		contentPane.add(txtIpAddress);
+        txtIpAddress.setFont(new Font("나눔스퀘어", Font.PLAIN, 12));
+        txtIpAddress.setBackground(Color.WHITE);
+        txtIpAddress.setHorizontalAlignment(SwingConstants.RIGHT);
+        txtIpAddress.setText("127.0.0.1");
+        txtIpAddress.setColumns(10);
+        txtIpAddress.setBounds(318, 312, 120, 24);
+        contentPane.add(txtIpAddress);
 		
+		
+		//port
 		JLabel lblPortNumber = new JLabel("Port Number");
-		lblPortNumber.setBounds(12, 163, 82, 33);
+		lblPortNumber.setForeground(Color.BLACK);
+        lblPortNumber.setBounds(251, 336, 63, 24);
 		contentPane.add(lblPortNumber);
 		
 		txtPortNumber = new JTextField();
-		txtPortNumber.setText("30000");
-		txtPortNumber.setHorizontalAlignment(SwingConstants.CENTER);
-		txtPortNumber.setColumns(10);
-		txtPortNumber.setBounds(101, 163, 116, 33);
-		contentPane.add(txtPortNumber);
+        txtPortNumber.setFont(new Font("나눔스퀘어", Font.PLAIN, 12));
+        txtPortNumber.setBackground(Color.WHITE);
+        txtPortNumber.setText("30000");
+        txtPortNumber.setHorizontalAlignment(SwingConstants.RIGHT);
+        txtPortNumber.setColumns(10);
+        txtPortNumber.setBounds(318, 336, 120, 24);
+        contentPane.add(txtPortNumber);
+        
+        //connect BTN
+		JButton btnConnect = new JButton("Start");
+		btnConnect.setBackground(Color.WHITE);
+        btnConnect.setForeground(Color.BLACK);
+        btnConnect.setBounds(307, 389, 83, 24);
+        contentPane.add(btnConnect);
 		
-		JButton btnConnect = new JButton("Connect");
-		btnConnect.setBounds(12, 223, 205, 38);
-		contentPane.add(btnConnect);
 		Myaction action = new Myaction();
 		btnConnect.addActionListener(action);
-		txtUserName.addActionListener(action);
-		txtIpAddress.addActionListener(action);
-		txtPortNumber.addActionListener(action);
+		
 	}
-	class Myaction implements ActionListener // ����Ŭ������ �׼� �̺�Ʈ ó�� Ŭ����
+	class Myaction implements ActionListener // 내부클래스로 액션 이벤트 처리 클래스
 	{
 		@Override
 		public void actionPerformed(ActionEvent e) {
