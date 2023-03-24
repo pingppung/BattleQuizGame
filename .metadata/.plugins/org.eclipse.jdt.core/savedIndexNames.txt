@@ -1,0 +1,5 @@
+INDEX VERSION 1.131+C:\Users\atmic\Downloads\NetP10-java-game\.metadata\.plugins\org.eclipse.jdt.core
+2282595833.index
+3460880079.index
+1331962649.index
+3528323770.index
