@@ -51,7 +51,7 @@ public class JavaGameClientMain extends JFrame {
 	public JavaGameClientMain() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 540);
-		ImageIcon face =  new ImageIcon("src/images/Background.png");
+		ImageIcon face =  new ImageIcon("src/images/MainBG.png");
 		contentPane = new JPanel() {
 			 public void paintComponent(Graphics g) {
 	               Dimension d = getSize();
