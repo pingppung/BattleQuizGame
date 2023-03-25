@@ -58,7 +58,7 @@ public class JavaGameClientView extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField txtInput;
-	private String UserName;
+	private String user_name;
 	private JButton btnSend;
 	private static final int BUF_LEN = 128; // Windows 처럼 BUF_LEN 을 정의
 	private Socket socket; // 연결소켓
@@ -77,6 +77,7 @@ public class JavaGameClientView extends JFrame {
 	private Frame frame;
 	private FileDialog fd;
 	
+	public static JLabel lblCharacter = new JLabel("");
 	private String character = "src/images/Character.gif"; //기본 캐릭터 지정
 
 
@@ -86,7 +87,7 @@ public class JavaGameClientView extends JFrame {
 	 */
 	public JavaGameClientView(String username, String ip_addr, String port_no)  {
 		
-		UserName = username;
+		user_name = username;
 		
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -124,15 +125,34 @@ public class JavaGameClientView extends JFrame {
 		txtInput.setColumns(10);
 
 		
+		//기본 캐릭터 설정
+		ImageIcon basiccharacter = new ImageIcon(character);
+		lblCharacter.setBackground(Color.WHITE);
+		lblCharacter.setIcon(basiccharacter);
+		lblCharacter.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCharacter.setBounds(141, 117, 90, 90);
+		contentPane.add(lblCharacter);
+		
+		//유저이름
 		lblUserName = new JLabel("Name");
-		lblUserName.setText(username);
 		lblUserName.setBounds(172, 217, 152, 36);
-		lblUserName.setBorder(new LineBorder(new Color(0, 0, 0)));
+		lblUserName.setBorder(new LineBorder(new Color(0, 0, 0),0));
 		lblUserName.setForeground(Color.WHITE);
 		lblUserName.setBackground(new Color(255, 255, 255));
-		lblUserName.setFont(new Font("굴림", Font.BOLD, 14));
+		lblUserName.setFont(new Font("배달의민족 주아", Font.BOLD, 25));
 		lblUserName.setHorizontalAlignment(SwingConstants.CENTER);
 		contentPane.add(lblUserName);
+		lblUserName.setText(user_name);
+		
+		//방입장 버튼
+		ImageIcon normalIcon = new ImageIcon("src/images/btnRoom.png");
+		ImageIcon rolloverIcon = new ImageIcon("src/images/btnRoom2.png");
+		ImageIcon pressedIcon = new ImageIcon("src/images/btnRoom2.png");
+		JButton btnEntry = new JButton(normalIcon);
+		btnEntry.setPressedIcon(pressedIcon); // pressedIcon용 이미지 등록
+		btnEntry.setRolloverIcon(rolloverIcon); // rolloverIcon용 이미지 등록
+		btnEntry.setBounds(534, 373, 152, 57);
+		contentPane.add(btnEntry);
 		
 		setVisible(true);
 
@@ -146,7 +166,7 @@ public class JavaGameClientView extends JFrame {
 			ois = new ObjectInputStream(socket.getInputStream());
 
 			// 프로토콜 : 100  -> 서버  (로그인)
-			ChatMsg obcm = new ChatMsg(UserName, "100", "Hello");
+			ChatMsg obcm = new ChatMsg(user_name, "100", "Hello");
 			SendObject(obcm);
 
 			ListenNetwork net = new ListenNetwork();
@@ -155,6 +175,9 @@ public class JavaGameClientView extends JFrame {
 			TextSendAction action = new TextSendAction();
 			txtInput.addActionListener(action);
 			txtInput.requestFocus();
+			
+			RoomEntryButtonClick action2 = new RoomEntryButtonClick();
+			btnEntry.addActionListener(action2);
 	
 
 		} catch (NumberFormatException | IOException e) {
@@ -190,7 +213,7 @@ public class JavaGameClientView extends JFrame {
 						continue;
 					switch (cm.code) {
 					case "200": // 대기방chatting
-						if (cm.UserName.equals(UserName))
+						if (cm.UserName.equals(user_name))
 							AppendTextR(msg); // 내 메세지는 우측에
 						else
 							AppendText(msg);
@@ -201,7 +224,7 @@ public class JavaGameClientView extends JFrame {
 //						else
 //							JavaGameClientRoom.AppendText(msg);
 						break;
-					case "500": // Mouse Event 수신
+					case "500":
 						
 						break;
 					}
@@ -225,7 +248,17 @@ public class JavaGameClientView extends JFrame {
 	}
 
 
-	
+	class RoomEntryButtonClick implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+			ChatMsg obcm = new ChatMsg(user_name, "500", "Entry");
+			obcm.character = character;
+			SendObject(obcm);
+			JavaGameClientRoom room = new JavaGameClientRoom(user_name, character);
+			setVisible(false);
+		}
+	}
 	// keyboard enter key 치면 서버로 전송
 	class TextSendAction implements ActionListener {
 		@Override
@@ -318,7 +351,7 @@ public class JavaGameClientView extends JFrame {
 //			byte[] bb;
 //			bb = MakePacket(msg);
 //			dos.write(bb, 0, bb.length);
-			ChatMsg obcm = new ChatMsg(UserName, "200", msg);
+			ChatMsg obcm = new ChatMsg(user_name, "200", msg);
 			oos.writeObject(obcm);
 		} catch (IOException e) {
 			// AppendText("dos.write() error");

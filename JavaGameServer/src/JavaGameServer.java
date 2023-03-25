@@ -1,4 +1,4 @@
-//JavaObjServer.java ObjectStream ±â¹Ý Ã¤ÆÃ Server
+//JavaObjServer.java ObjectStream ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ Server
 
 import java.awt.EventQueue;
 
@@ -36,10 +36,10 @@ public class JavaGameServer extends JFrame {
 	JTextArea textArea;
 	private JTextField txtPortNumber;
 
-	private ServerSocket socket; // ¼­¹ö¼ÒÄÏ
-	private Socket client_socket; // accept() ¿¡¼­ »ý¼ºµÈ client ¼ÒÄÏ
-	private Vector UserVec = new Vector(); // ¿¬°áµÈ »ç¿ëÀÚ¸¦ ÀúÀåÇÒ º¤ÅÍ
-	private static final int BUF_LEN = 128; // Windows Ã³·³ BUF_LEN À» Á¤ÀÇ
+	private ServerSocket socket; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	private Socket client_socket; // accept() ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ client ï¿½ï¿½ï¿½ï¿½
+	private Vector UserVec = new Vector(); // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	private static final int BUF_LEN = 128; // Windows Ã³ï¿½ï¿½ BUF_LEN ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 	/**
 	 * Launch the application.
@@ -98,8 +98,8 @@ public class JavaGameServer extends JFrame {
 				}
 				AppendText("Chat Server Running..");
 				btnServerStart.setText("Chat Server Running..");
-				btnServerStart.setEnabled(false); // ¼­¹ö¸¦ ´õÀÌ»ó ½ÇÇà½ÃÅ°Áö ¸ø ÇÏ°Ô ¸·´Â´Ù
-				txtPortNumber.setEnabled(false); // ´õÀÌ»ó Æ÷Æ®¹øÈ£ ¼öÁ¤¸ø ÇÏ°Ô ¸·´Â´Ù
+				btnServerStart.setEnabled(false); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì»ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½ ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½Â´ï¿½
+				txtPortNumber.setEnabled(false); // ï¿½ï¿½ï¿½Ì»ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½È£ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½Â´ï¿½
 				AcceptServer accept_server = new AcceptServer();
 				accept_server.start();
 			}
@@ -108,20 +108,20 @@ public class JavaGameServer extends JFrame {
 		contentPane.add(btnServerStart);
 	}
 
-	// »õ·Î¿î Âü°¡ÀÚ accept() ÇÏ°í user thread¸¦ »õ·Î »ý¼ºÇÑ´Ù.
+	// ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ accept() ï¿½Ï°ï¿½ user threadï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	class AcceptServer extends Thread {
 		@SuppressWarnings("unchecked")
 		public void run() {
-			while (true) { // »ç¿ëÀÚ Á¢¼ÓÀ» °è¼ÓÇØ¼­ ¹Þ±â À§ÇØ while¹®
+			while (true) { // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Þ±ï¿½ ï¿½ï¿½ï¿½ï¿½ whileï¿½ï¿½
 				try {
 					AppendText("Waiting new clients ...");
-					client_socket = socket.accept(); // accept°¡ ÀÏ¾î³ª±â Àü±îÁö´Â ¹«ÇÑ ´ë±âÁß
-					AppendText("»õ·Î¿î Âü°¡ÀÚ from " + client_socket);
-					// User ´ç ÇÏ³ª¾¿ Thread »ý¼º
+					client_socket = socket.accept(); // acceptï¿½ï¿½ ï¿½Ï¾î³ªï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
+					AppendText("ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ from " + client_socket);
+					// User ï¿½ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ Thread ï¿½ï¿½ï¿½ï¿½
 					UserService new_user = new UserService(client_socket);
-					UserVec.add(new_user); // »õ·Î¿î Âü°¡ÀÚ ¹è¿­¿¡ Ãß°¡
-					new_user.start(); // ¸¸µç °´Ã¼ÀÇ ½º·¹µå ½ÇÇà
-					AppendText("ÇöÀç Âü°¡ÀÚ ¼ö " + UserVec.size());
+					UserVec.add(new_user); // ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½è¿­ï¿½ï¿½ ï¿½ß°ï¿½
+					new_user.start(); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+					AppendText("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ " + UserVec.size());
 				} catch (IOException e) {
 					AppendText("accept() error");
 					// System.exit(0);
@@ -131,21 +131,21 @@ public class JavaGameServer extends JFrame {
 	}
 
 	public void AppendText(String str) {
-		// textArea.append("»ç¿ëÀÚ·ÎºÎÅÍ µé¾î¿Â ¸Þ¼¼Áö : " + str+"\n");
+		// textArea.append("ï¿½ï¿½ï¿½ï¿½Ú·Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¼ï¿½ï¿½ï¿½ : " + str+"\n");
 		textArea.append(str + "\n");
 		textArea.setCaretPosition(textArea.getText().length());
 	}
 
 	public void AppendObject(ChatMsg msg) {
-		// textArea.append("»ç¿ëÀÚ·ÎºÎÅÍ µé¾î¿Â object : " + str+"\n");
+		// textArea.append("ï¿½ï¿½ï¿½ï¿½Ú·Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ object : " + str+"\n");
 		textArea.append("code = " + msg.code + "\n");
 		textArea.append("id = " + msg.UserName + "\n");
 		textArea.append("data = " + msg.data + "\n");
 		textArea.setCaretPosition(textArea.getText().length());
 	}
 
-	// User ´ç »ý¼ºµÇ´Â Thread
-	// Read One ¿¡¼­ ´ë±â -> Write All
+	// User ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ Thread
+	// Read One ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ -> Write All
 	class UserService extends Thread {
 		private InputStream is;
 		private OutputStream os;
@@ -162,7 +162,7 @@ public class JavaGameServer extends JFrame {
 
 		public UserService(Socket client_socket) {
 			// TODO Auto-generated constructor stub
-			// ¸Å°³º¯¼ö·Î ³Ñ¾î¿Â ÀÚ·á ÀúÀå
+			// ï¿½Å°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ¾ï¿½ï¿½ ï¿½Ú·ï¿½ ï¿½ï¿½ï¿½ï¿½
 			this.client_socket = client_socket;
 			this.user_vc = UserVec;
 			try {
@@ -183,7 +183,7 @@ public class JavaGameServer extends JFrame {
 //
 //				//String[] msg = line1.split(" ");
 //				//UserName = msg[1].trim();
-//				UserStatus = "O"; // Online »óÅÂ
+//				UserStatus = "O"; // Online ï¿½ï¿½ï¿½ï¿½
 //				Login();
 			} catch (Exception e) {
 				AppendText("userService error");
@@ -191,21 +191,21 @@ public class JavaGameServer extends JFrame {
 		}
 
 		public void Login() {
-			AppendText("»õ·Î¿î Âü°¡ÀÚ " + UserName + " ÀÔÀå.");
+			AppendText("ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ " + UserName + " ï¿½ï¿½ï¿½ï¿½.");
 			WriteOne("Welcome to Java chat server\n");
-			WriteOne(UserName + "´Ô È¯¿µÇÕ´Ï´Ù.\n"); // ¿¬°áµÈ »ç¿ëÀÚ¿¡°Ô Á¤»óÁ¢¼ÓÀ» ¾Ë¸²
-			String msg = "[" + UserName + "]´ÔÀÌ ÀÔÀå ÇÏ¿´½À´Ï´Ù.\n";
-			WriteOthers(msg); // ¾ÆÁ÷ user_vc¿¡ »õ·Î ÀÔÀåÇÑ user´Â Æ÷ÇÔµÇÁö ¾Ê¾Ò´Ù.
+			WriteOne(UserName + "ï¿½ï¿½ È¯ï¿½ï¿½ï¿½Õ´Ï´ï¿½.\n"); // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë¸ï¿½
+			String msg = "[" + UserName + "]ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï¿ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.\n";
+			WriteOthers(msg); // ï¿½ï¿½ï¿½ï¿½ user_vcï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ userï¿½ï¿½ ï¿½ï¿½ï¿½Ôµï¿½ï¿½ï¿½ ï¿½Ê¾Ò´ï¿½.
 		}
 
 		public void Logout() {
-			String msg = "[" + UserName + "]´ÔÀÌ ÅðÀå ÇÏ¿´½À´Ï´Ù.\n";
-			UserVec.removeElement(this); // LogoutÇÑ ÇöÀç °´Ã¼¸¦ º¤ÅÍ¿¡¼­ Áö¿î´Ù
-			WriteAll(msg); // ³ª¸¦ Á¦¿ÜÇÑ ´Ù¸¥ Userµé¿¡°Ô Àü¼Û
-			AppendText("»ç¿ëÀÚ " + "[" + UserName + "] ÅðÀå. ÇöÀç Âü°¡ÀÚ ¼ö " + UserVec.size());
+			String msg = "[" + UserName + "]ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï¿ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.\n";
+			UserVec.removeElement(this); // Logoutï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
+			WriteAll(msg); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ Userï¿½é¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+			AppendText("ï¿½ï¿½ï¿½ï¿½ï¿½ " + "[" + UserName + "] ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ " + UserVec.size());
 		}
 
-		// ¸ðµç Userµé¿¡°Ô ¹æ¼Û. °¢°¢ÀÇ UserService ThreadÀÇ WriteONe() À» È£ÃâÇÑ´Ù.
+		// ï¿½ï¿½ï¿½ Userï¿½é¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ UserService Threadï¿½ï¿½ WriteONe() ï¿½ï¿½ È£ï¿½ï¿½ï¿½Ñ´ï¿½.
 		public void WriteAll(String str) {
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
@@ -213,7 +213,7 @@ public class JavaGameServer extends JFrame {
 					user.WriteOne(str);
 			}
 		}
-		// ¸ðµç Userµé¿¡°Ô Object¸¦ ¹æ¼Û. Ã¤ÆÃ message¿Í image object¸¦ º¸³¾ ¼ö ÀÖ´Ù
+		// ï¿½ï¿½ï¿½ Userï¿½é¿¡ï¿½ï¿½ Objectï¿½ï¿½ ï¿½ï¿½ï¿½. Ã¤ï¿½ï¿½ messageï¿½ï¿½ image objectï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½
 		public void WriteAllObject(Object ob) {
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
@@ -222,7 +222,7 @@ public class JavaGameServer extends JFrame {
 			}
 		}
 
-		// ³ª¸¦ Á¦¿ÜÇÑ Userµé¿¡°Ô ¹æ¼Û. °¢°¢ÀÇ UserService ThreadÀÇ WriteONe() À» È£ÃâÇÑ´Ù.
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Userï¿½é¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ UserService Threadï¿½ï¿½ WriteONe() ï¿½ï¿½ È£ï¿½ï¿½ï¿½Ñ´ï¿½.
 		public void WriteOthers(String str) {
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
@@ -231,7 +231,7 @@ public class JavaGameServer extends JFrame {
 			}
 		}
 
-		// Windows Ã³·³ message Á¦¿ÜÇÑ ³ª¸ÓÁö ºÎºÐÀº NULL ·Î ¸¸µé±â À§ÇÑ ÇÔ¼ö
+		// Windows Ã³ï¿½ï¿½ message ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½ï¿½ï¿½ NULL ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
 		public byte[] MakePacket(String msg) {
 			byte[] packet = new byte[BUF_LEN];
 			byte[] bb = null;
@@ -249,7 +249,7 @@ public class JavaGameServer extends JFrame {
 			return packet;
 		}
 
-		// UserService Thread°¡ ´ã´çÇÏ´Â Client ¿¡°Ô 1:1 Àü¼Û
+		// UserService Threadï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ Client ï¿½ï¿½ï¿½ï¿½ 1:1 ï¿½ï¿½ï¿½ï¿½
 		public void WriteOne(String msg) {
 			try {
 				// dos.writeUTF(msg);
@@ -273,14 +273,14 @@ public class JavaGameServer extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				Logout(); // ¿¡·¯°¡³­ ÇöÀç °´Ã¼¸¦ º¤ÅÍ¿¡¼­ Áö¿î´Ù
+				Logout(); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 			}
 		}
 
-		// ±Ó¼Ó¸» Àü¼Û
+		// ï¿½Ó¼Ó¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 		public void WritePrivate(String msg) {
 			try {
-				ChatMsg obcm = new ChatMsg("±Ó¼Ó¸»", "200", msg);
+				ChatMsg obcm = new ChatMsg("ï¿½Ó¼Ó¸ï¿½", "200", msg);
 				oos.writeObject(obcm);
 			} catch (IOException e) {
 				AppendText("dos.writeObject() error");
@@ -294,7 +294,7 @@ public class JavaGameServer extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				Logout(); // ¿¡·¯°¡³­ ÇöÀç °´Ã¼¸¦ º¤ÅÍ¿¡¼­ Áö¿î´Ù
+				Logout(); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 			}
 		}
 		public void WriteOneObject(Object ob) {
@@ -319,7 +319,7 @@ public class JavaGameServer extends JFrame {
 		}
 		
 		public void run() {
-			while (true) { // »ç¿ëÀÚ Á¢¼ÓÀ» °è¼ÓÇØ¼­ ¹Þ±â À§ÇØ while¹®
+			while (true) { // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½Þ±ï¿½ ï¿½ï¿½ï¿½ï¿½ whileï¿½ï¿½
 				try {
 					// String msg = dis.readUTF();
 //					byte[] b = new byte[BUF_LEN];
@@ -335,10 +335,10 @@ public class JavaGameServer extends JFrame {
 //							break;
 //						} catch (Exception ee) {
 //							break;
-//						} // catch¹® ³¡
+//						} // catchï¿½ï¿½ ï¿½ï¿½
 //					}
 //					String msg = new String(b, "euc-kr");
-//					msg = msg.trim(); // ¾ÕµÚ blank NULL, \n ¸ðµÎ Á¦°Å
+//					msg = msg.trim(); // ï¿½Õµï¿½ blank NULL, \n ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 					Object obcm = null;
 					String msg = null;
 					ChatMsg cm = null;
@@ -360,13 +360,13 @@ public class JavaGameServer extends JFrame {
 						continue;
 					if (cm.code.matches("100")) {
 						UserName = cm.UserName;
-						UserStatus = "O"; // Online »óÅÂ
+						UserStatus = "O"; // Online ï¿½ï¿½ï¿½ï¿½
 						Login();
 					} else if (cm.code.matches("200")) {
 						msg = String.format("[%s] %s", cm.UserName, cm.data);
-						AppendText(msg); // server È­¸é¿¡ Ãâ·Â
-						String[] args = msg.split(" "); // ´Ü¾îµéÀ» ºÐ¸®ÇÑ´Ù.
-						if (args.length == 1) { // Enter key ¸¸ µé¾î¿Â °æ¿ì Wakeup Ã³¸®¸¸ ÇÑ´Ù.
+						AppendText(msg); // server È­ï¿½é¿¡ ï¿½ï¿½ï¿½
+						String[] args = msg.split(" "); // ï¿½Ü¾ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¸ï¿½ï¿½Ñ´ï¿½.
+						if (args.length == 1) { // Enter key ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ Wakeup Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½.
 							UserStatus = "O";
 						} else if (args[1].matches("/exit")) {
 							Logout();
@@ -384,31 +384,33 @@ public class JavaGameServer extends JFrame {
 							UserStatus = "S";
 						} else if (args[1].matches("/wakeup")) {
 							UserStatus = "O";
-						} else if (args[1].matches("/to")) { // ±Ó¼Ó¸»
+						} else if (args[1].matches("/to")) { // ï¿½Ó¼Ó¸ï¿½
 							for (int i = 0; i < user_vc.size(); i++) {
 								UserService user = (UserService) user_vc.elementAt(i);
 								if (user.UserName.matches(args[2]) && user.UserStatus.matches("O")) {
 									String msg2 = "";
-									for (int j = 3; j < args.length; j++) {// ½ÇÁ¦ message ºÎºÐ
+									for (int j = 3; j < args.length; j++) {// ï¿½ï¿½ï¿½ï¿½ message ï¿½Îºï¿½
 										msg2 += args[j];
 										if (j < args.length - 1)
 											msg2 += " ";
 									}
-									// /to »©°í.. [±Ó¼Ó¸»] [user1] Hello user2..
+									// /to ï¿½ï¿½ï¿½ï¿½.. [ï¿½Ó¼Ó¸ï¿½] [user1] Hello user2..
 									user.WritePrivate(args[0] + " " + msg2 + "\n");
-									//user.WriteOne("[±Ó¼Ó¸»] " + args[0] + " " + msg2 + "\n");
+									//user.WriteOne("[ï¿½Ó¼Ó¸ï¿½] " + args[0] + " " + msg2 + "\n");
 									break;
 								}
 							}
-						} else { // ÀÏ¹Ý Ã¤ÆÃ ¸Þ½ÃÁö
+						} else { // ï¿½Ï¹ï¿½ Ã¤ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½
 							UserStatus = "O";
 							//WriteAll(msg + "\n"); // Write All
 							WriteAllObject(cm);
 						}
-					} else if (cm.code.matches("400")) { // logout message Ã³¸®
+					} else if (cm.code.matches("400")) { // logout message Ã³ï¿½ï¿½
 						Logout();
 						break;
-					} else { // 300, 500, ... ±âÅ¸ object´Â ¸ðµÎ ¹æ¼ÛÇÑ´Ù.
+					} else if (cm.code.matches("500")){
+						WriteAllObject(cm);
+					} else { // 300, 500, ... ï¿½ï¿½Å¸ objectï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 						WriteAllObject(cm);
 					} 
 				} catch (IOException e) {
@@ -419,12 +421,12 @@ public class JavaGameServer extends JFrame {
 						ois.close();
 						oos.close();
 						client_socket.close();
-						Logout(); // ¿¡·¯°¡³­ ÇöÀç °´Ã¼¸¦ º¤ÅÍ¿¡¼­ Áö¿î´Ù
+						Logout(); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½Í¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 						break;
 					} catch (Exception ee) {
 						break;
-					} // catch¹® ³¡
-				} // ¹Ù±ù catch¹®³¡
+					} // catchï¿½ï¿½ ï¿½ï¿½
+				} // ï¿½Ù±ï¿½ catchï¿½ï¿½ï¿½ï¿½
 			} // while
 		} // run
 	}
