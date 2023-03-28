@@ -2,7 +2,7 @@
 // ChatMsg.java 채팅 메시지 ObjectStream 용.
 import java.awt.event.MouseEvent;
 import java.io.Serializable;
-import javax.swing.ImageIcon;
+import java.util.ArrayList;
 
 class ChatMsg implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -10,10 +10,10 @@ class ChatMsg implements Serializable {
 	public String UserName;
 	public String character;
 	public String data;
-	public ImageIcon img;
-	public MouseEvent mouse_e;
-	public int pen_size; // pen size
-
+	public String[] players_name = new String[4];
+	public String[] players_character = new String[4];
+	//public ArrayList<JavaGameClientRoom.Player> playerList = new ArrayList<>();
+	//public Player[] playerList = new Player[3];
 	public ChatMsg(String username, String code, String msg) {
 		this.code = code;
 		this.UserName = username;

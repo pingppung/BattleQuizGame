@@ -1,21 +1,21 @@
 
-// ChatMsg.java Ã¤ÆÃ ¸Ş½ÃÁö ObjectStream ¿ë.
-import java.awt.event.MouseEvent;
+// ChatMsg.java ì±„íŒ… ë©”ì‹œì§€ ObjectStream ìš©.
 import java.io.Serializable;
-import javax.swing.ImageIcon;
+import java.util.ArrayList;
 
 class ChatMsg implements Serializable {
 	private static final long serialVersionUID = 1L;
-	public String code; // 100:·Î±×ÀÎ, 400:·Î±×¾Æ¿ô, 200:Ã¤ÆÃ¸Ş½ÃÁö, 300:Image, 500: Mouse Event
+	public String code; // 100:ë¡œê·¸ì¸, 400:ë¡œê·¸ì•„ì›ƒ, 200:ì±„íŒ…ë©”ì‹œì§€, 300:Image, 500: Mouse Event
 	public String UserName;
+	public String character;
 	public String data;
-	public ImageIcon img;
-	public MouseEvent mouse_e;
-	public int pen_size; // pen size
-
-	public ChatMsg(String UserName, String code, String msg) {
+	public String[] players_name = new String[4];
+	public String[] players_character = new String[4];
+	//public ArrayList<JavaGameServer.Player> playerList = JavaGameServer.PlayerList;
+	public ChatMsg(String username, String code, String msg) {
 		this.code = code;
-		this.UserName = UserName;
+		this.UserName = username;
 		this.data = msg;
 	}
+
 }

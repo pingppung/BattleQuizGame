@@ -21,6 +21,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
+import java.util.Arrays;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -68,11 +69,11 @@ public class JavaGameClientView extends JFrame {
 	private DataOutputStream dos;
 
 	private ObjectInputStream ois;
-	private ObjectOutputStream oos;
+	private static ObjectOutputStream oos;
 
 	private JLabel lblUserName;
 	// private JTextArea textArea;
-	private JTextPane textArea = new JTextPane();
+	private static JTextPane textArea = new JTextPane();
 
 	private Frame frame;
 	private FileDialog fd;
@@ -176,8 +177,8 @@ public class JavaGameClientView extends JFrame {
 			txtInput.addActionListener(action);
 			txtInput.requestFocus();
 			
-			RoomEntryButtonClick action2 = new RoomEntryButtonClick();
-			btnEntry.addActionListener(action2);
+			RoomEntryButtonClick action_entry = new RoomEntryButtonClick();
+			btnEntry.addActionListener(action_entry);
 	
 
 		} catch (NumberFormatException | IOException e) {
@@ -224,7 +225,26 @@ public class JavaGameClientView extends JFrame {
 //						else
 //							JavaGameClientRoom.AppendText(msg);
 						break;
-					case "500":
+					case "500": 
+						if(cm.data.equals("changePlayer")) {
+							//다른 플레이어 화면에서 해당 플레이어 없어지도록
+						}
+						for(int i = 0; i < cm.players_name.length; i++) {
+							JavaGameClientRoom.Player player = new JavaGameClientRoom.Player(cm.players_name[i], cm.players_character[i]);
+							JavaGameClientRoom.PlayerList.add(player);
+							if(cm.players_name[i] != null && cm.players_character[i] != null) {
+								JavaGameClientRoom.lblUserName[i].setText(cm.players_name[i]);
+								ImageIcon character = new ImageIcon(cm.players_character[i]);
+								JavaGameClientRoom.lblUserCharacter[i].setIcon(character);
+								if (user_name.equals(cm.players_name[i])) {
+									JavaGameClientRoom.lblUserName[i].setForeground(new Color(102, 102, 204));
+									
+								}
+							} 
+						}
+
+						break;
+					case "600":
 						
 						break;
 					}
@@ -251,12 +271,12 @@ public class JavaGameClientView extends JFrame {
 	class RoomEntryButtonClick implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-
+			//문제점 : 대기방에 여러창 띄워놓은 다음 게임방에 들어갈때 오류남
+			JavaGameClientRoom room = new JavaGameClientRoom(user_name, character);
+			setVisible(false);
 			ChatMsg obcm = new ChatMsg(user_name, "500", "Entry");
 			obcm.character = character;
 			SendObject(obcm);
-			JavaGameClientRoom room = new JavaGameClientRoom(user_name, character);
-			setVisible(false);
 		}
 	}
 	// keyboard enter key 치면 서버로 전송
@@ -286,7 +306,7 @@ public class JavaGameClientView extends JFrame {
 	}
 
 	// 화면에 출력
-	public void AppendText(String msg) {
+	public static void AppendText(String msg) {
 		// textArea.append(msg + "\n");
 		// AppendIcon(icon1);
 		msg = msg.trim(); // 앞뒤 blank와 \n을 제거한다.
@@ -370,7 +390,7 @@ public class JavaGameClientView extends JFrame {
 		}
 	}
 
-	public void SendObject(Object ob) { // 서버로 메세지를 보내는 메소드
+	public static void SendObject(Object ob) { // 서버로 메세지를 보내는 메소드
 		try {
 			oos.writeObject(ob);
 		} catch (IOException e) {
