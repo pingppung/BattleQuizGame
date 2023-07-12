@@ -1,11 +1,17 @@
+package GamePkg;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -36,20 +42,26 @@ public class JavaGameClientRoom extends JFrame {
 	private ObjectInputStream ois;
 	private ObjectOutputStream oos;
 	
-	public static class Player{
-		String name;
-		String character;
-		Player(String name, String character){
-			this.name = name;
-			this.character = character;
-			
-		}
-	}
 	public static JLabel[] lblUserName= new JLabel[4];
 	public static JLabel[] lblUserCharacter= new JLabel[4];
 	
+	
+	public static class Player{
+		int port;
+		String name;
+		String character;
+		int roomId;
+		Player(int port, String name, String character, int roomId){
+			this.port = port;
+			this.name = name;
+			this.character = character;
+			this.roomId = roomId;
+		}
+	}
+	
+	
 	//private static Player[] PlayerList = new Player[4];
-	public static ArrayList<Player> PlayerList = new ArrayList<>();
+	//public static ArrayList<Player> PlayerList = new ArrayList<>();
 	public JavaGameClientRoom(String username, String character) {
 		// TODO Auto-generated constructor stub
 		this.username = username;
@@ -90,15 +102,15 @@ public class JavaGameClientRoom extends JFrame {
 
        //본인 닉네임 PlayList에 저장 && 화면에 적용
        for(int i = 0; i < 4; i++) {
-    	  lblUserName[i] = new JLabel();
-    	 // lblUserName[i].setText(PlayerList.get(i).name);
+    	  lblUserName[i] = new JLabel("");
+    	  //lblUserName[i].setText("");
     	  lblUserName[i].setBackground(Color.BLACK);
     	  lblUserName[i].setForeground(Color.WHITE);
     	  lblUserName[i].setFont(new Font("배달의민족 주아", Font.BOLD, 20));
     	  lblUserName[i].setHorizontalAlignment(SwingConstants.CENTER);
     	  lblUserName[i].setBounds(61 + i * 180, 422, 121, 40);
     	   
-    	  lblUserCharacter[i] = new JLabel();
+    	  lblUserCharacter[i] = new JLabel("");
     	  //lblUserCharacter[i].setIcon(new ImageIcon(PlayerList.get(i).character));
     	   //PlayerList[i].lblCharacter.setIcon(new ImageIcon(this.character));
     	  //(가로위치, 세로위치, 가로길이, 세로길이);

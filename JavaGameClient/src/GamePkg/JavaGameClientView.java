@@ -1,17 +1,15 @@
+package GamePkg;
 
 // JavaObjClientView.java ObjecStram 기반 Client
 //실질적인 채팅 창
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FileDialog;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.image.ImageObserver;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -21,32 +19,18 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
-import java.util.Arrays;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Color;
-import java.awt.Dimension;
-
-import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.JToggleButton;
-import javax.swing.JList;
-import java.awt.Canvas;
-import javax.swing.border.TitledBorder;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -57,10 +41,9 @@ public class JavaGameClientView extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
-	private JTextField txtInput;
-	private String user_name;
-	private JButton btnSend;
+	
+	
+	
 	private static final int BUF_LEN = 128; // Windows 처럼 BUF_LEN 을 정의
 	private Socket socket; // 연결소켓
 	private InputStream is;
@@ -71,6 +54,10 @@ public class JavaGameClientView extends JFrame {
 	private ObjectInputStream ois;
 	private static ObjectOutputStream oos;
 
+	private JPanel contentPane;
+	private JTextField txtInput;
+	private String user_name;
+	private JButton btnSend;
 	private JLabel lblUserName;
 	// private JTextArea textArea;
 	private static JTextPane textArea = new JTextPane();
@@ -80,7 +67,7 @@ public class JavaGameClientView extends JFrame {
 	
 	public static JLabel lblCharacter = new JLabel("");
 	private String character = "src/images/Character.gif"; //기본 캐릭터 지정
-
+	
 
 	/**
 	 * Create the frame.
@@ -88,8 +75,7 @@ public class JavaGameClientView extends JFrame {
 	 */
 	public JavaGameClientView(String username, String ip_addr, String port_no)  {
 		
-		user_name = username;
-		
+		user_name = username; // 문제 : 다른 클라이언트가 view 에 들어올시 변경됨
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 540);
@@ -155,6 +141,8 @@ public class JavaGameClientView extends JFrame {
 		btnEntry.setBounds(534, 373, 152, 57);
 		contentPane.add(btnEntry);
 		
+
+		AppendText(ip_addr + " "+ port_no);
 		setVisible(true);
 
 	
@@ -166,10 +154,11 @@ public class JavaGameClientView extends JFrame {
 			oos.flush();
 			ois = new ObjectInputStream(socket.getInputStream());
 
-			// 프로토콜 : 100  -> 서버  (로그인)
+			// 프로토콜 : 100  -> 서버 (로그인)
 			ChatMsg obcm = new ChatMsg(user_name, "100", "Hello");
+			obcm.character = character;
 			SendObject(obcm);
-
+			
 			ListenNetwork net = new ListenNetwork();
 			net.start();
 			
@@ -209,39 +198,66 @@ public class JavaGameClientView extends JFrame {
 						break;
 					if (obcm instanceof ChatMsg) {
 						cm = (ChatMsg) obcm;
-						msg = String.format("[%s]\n%s", cm.UserName, cm.data);
+						msg = String.format("[%s]\n%s", cm.username, cm.data);
 					} else
 						continue;
 					switch (cm.code) {
 					case "200": // 대기방chatting
-						if (cm.UserName.equals(user_name))
+						if (cm.username.equals(user_name))
 							AppendTextR(msg); // 내 메세지는 우측에
 						else
 							AppendText(msg);
 						break;
 					case "300": // 게임방 chatting
-//						if (cm.UserName.equals(UserName))
+//						if (cm.username.equals(user_name))
 //							JavaGameClientRoom.AppendTextR(msg);
 //						else
 //							JavaGameClientRoom.AppendText(msg);
 						break;
 					case "500": 
-						if(cm.data.equals("changePlayer")) {
-							//다른 플레이어 화면에서 해당 플레이어 없어지도록
+//						if(cm.data.equals("changePlayer")) {
+//							//다른 플레이어 화면에서 해당 플레이어 없어지도록
+//						}
+//						for(int i = 0; i < cm.playerlist.size(); i++) {
+//							AppendText(cm.playerlist.get(i)+"");
+//						}
+						
+						int idx = 0;
+						AppendText(user_name);
+						//AppendText(cm.playerlist.get(0));
+						for(String name : cm.playerlist.keySet()) {
+							JavaGameClientRoom.lblUserName[idx].setText(name);
+							ImageIcon character = new ImageIcon(cm.playerlist.get(name));
+							JavaGameClientRoom.lblUserCharacter[idx].setIcon(character);
+							if (user_name.equals(name)) {
+								//AppendText(user_name + " "+ name);
+								JavaGameClientRoom.lblUserName[idx].setForeground(new Color(102, 102, 204));
+							}
+
+							idx++;
 						}
-						for(int i = 0; i < cm.players_name.length; i++) {
-							JavaGameClientRoom.Player player = new JavaGameClientRoom.Player(cm.players_name[i], cm.players_character[i]);
-							JavaGameClientRoom.PlayerList.add(player);
-							if(cm.players_name[i] != null && cm.players_character[i] != null) {
-								JavaGameClientRoom.lblUserName[i].setText(cm.players_name[i]);
-								ImageIcon character = new ImageIcon(cm.players_character[i]);
-								JavaGameClientRoom.lblUserCharacter[i].setIcon(character);
-								if (user_name.equals(cm.players_name[i])) {
-									JavaGameClientRoom.lblUserName[i].setForeground(new Color(102, 102, 204));
-									
-								}
-							} 
-						}
+						//JavaGameClientRoom.lblUserName[user_idx].setForeground(new Color(102, 102, 204));
+//						for(int i = 0; i < cm.playerList.size(); i++) {
+//							JavaGameClientRoom.lblUserName[i].setText(cm.playerList.get(i).name);
+//							ImageIcon character = new ImageIcon(cm.playerList.get(i).character);
+//							JavaGameClientRoom.lblUserCharacter[i].setIcon(character);
+//							if (user_name.equals(cm.playerList.get(i).name)) {
+//								JavaGameClientRoom.lblUserName[i].setForeground(new Color(102, 102, 204));
+//							}
+//						}
+//						for(int i = 0; i < cm.players_name.length; i++) {
+//							JavaGameClientRoom.Player player = new JavaGameClientRoom.Player(cm.players_name[i], cm.players_character[i]);
+//							JavaGameClientRoom.PlayerList.add(player);
+//							if(cm.players_name[i] != null && cm.players_character[i] != null) {
+//								JavaGameClientRoom.lblUserName[i].setText(cm.players_name[i]);
+//								ImageIcon character = new ImageIcon(cm.players_character[i]);
+//								JavaGameClientRoom.lblUserCharacter[i].setIcon(character);
+//								if (user_name.equals(cm.players_name[i])) {
+//									JavaGameClientRoom.lblUserName[i].setForeground(new Color(102, 102, 204));
+//									
+//								}
+//							} 
+//						}
 
 						break;
 					case "600":
@@ -277,6 +293,7 @@ public class JavaGameClientView extends JFrame {
 			ChatMsg obcm = new ChatMsg(user_name, "500", "Entry");
 			obcm.character = character;
 			SendObject(obcm);
+			
 		}
 	}
 	// keyboard enter key 치면 서버로 전송
@@ -367,10 +384,6 @@ public class JavaGameClientView extends JFrame {
 	// Server에게 network으로 전송
 	public void SendMessage(String msg) {
 		try {
-			// dos.writeUTF(msg);
-//			byte[] bb;
-//			bb = MakePacket(msg);
-//			dos.write(bb, 0, bb.length);
 			ChatMsg obcm = new ChatMsg(user_name, "200", msg);
 			oos.writeObject(obcm);
 		} catch (IOException e) {

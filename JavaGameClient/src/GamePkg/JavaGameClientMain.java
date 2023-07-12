@@ -1,3 +1,4 @@
+package GamePkg;
 // JavaObjClient.java
 // ObjecStream 사용하는 채팅 Client
 
