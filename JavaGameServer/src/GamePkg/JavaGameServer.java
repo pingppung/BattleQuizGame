@@ -14,7 +14,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.List;
+import java.util.*;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -409,6 +409,7 @@ public class JavaGameServer extends JFrame {
 						//플레이어 로그인
 						Player player = new Player(user_name, cm.character);
 						player.setSocket(socket);
+						player.setPlayerStatus(PlayerStatus.Status.StandBy);
 						//roomlist 마지막 방에서 플레이어 4명일 경우 새로 방 만들기
 						int roomCnt = RoomManager.roomCount();
 						Room room = null;
@@ -433,24 +434,47 @@ public class JavaGameServer extends JFrame {
 							}
 						}
 						//본인이 속한 방의 유저리스트들을 찾아서 클라이언트에게 넘겨주기
-						//obcm1.playerList = player.getRoom().getPlayerList();
-						//obcm1.playerList = RoomManager.getRoom(room).getPlayerList();
 						Room getRoom = RoomManager.getRoom(room);
 						room_id = getRoom.getId(); //입장하는 방의 id를 userservice에 저장 
 						roomId = room_id; // room에 있는 유저한테 데이터 보낼때 비교할 변수
 						List playerlist = getRoom.getPlayerList();
 
-						AppendText(room.getPlayerSize()+"");
+						//AppendText(room.getPlayerSize()+"");
 						for(int i = 0; i < playerlist.size(); i++) {
 							Player p = (Player) playerlist.get(i);
-							//왜 순서가 바뀔까..
+							//왜 순서가 바뀔까.. hashset ->linkedHashset으로 변경해서 해결
 							
-							obcm1.playerlist.put(p.getName(), p.getCharacter());
+							obcm1.playerlist.put(p.getName(), Arrays.asList(p.getCharacter(),p.getPlayerStatus().toString()));
 						}
 						WriteRoomObject(obcm1); //방안에 있는 사람들한테만 전달 - user roomid를 어떻게 넣어줄건지 생각해보기
 
 					} else if(cm.code.matches("550")){ //ready 
+						//여기서 해당 유저에 대한 상태를 레디로 바꾸고 방안에 있는 사람들한테 유저 상태 변경 전달
 						
+						for (int i = 0; i < user_vc.size(); i++) {
+							UserService user = (UserService) user_vc.elementAt(i);
+							if (user.user_name.equals(cm.username) && user.user_status == "O") {
+								roomId = user.room_id; //유저가 속한 룸id 
+							}
+						}
+						ChatMsg obcm1 = new ChatMsg(cm.username, "550", "playerReadyList");
+						
+						//유저가 속한 roomId로 room안에 있는 playerList가져오기
+						Room getRoom = RoomManager.getRoom(roomId-1);  //roomId가 1부터 시작해서 -1해서 범위벗어나지 않게
+						Player player = getRoom.getPlayerByName(cm.username);
+						AppendText(cm.data);
+						if(cm.data.equals("준비완료")) {
+							player.setPlayerStatus(PlayerStatus.Status.Ready);
+						} else {
+							player.setPlayerStatus(PlayerStatus.Status.StandBy);
+						}
+						
+						List playerlist = getRoom.getPlayerList();
+						for(int i = 0; i < playerlist.size(); i++) {
+							Player p = (Player) playerlist.get(i);
+							obcm1.playerlist.put(p.getName(), Arrays.asList(p.getCharacter(),p.getPlayerStatus().toString()));
+						}
+						WriteRoomObject(obcm1);
 						
 					} else if (cm.code.matches("600")) { // 게임방->로비 이동
 //						AppendText(PlayerList.iterator().next().name.equals(cm.UserName) +" ");

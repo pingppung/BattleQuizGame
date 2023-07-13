@@ -41,6 +41,15 @@ public class Room {
     public void setPlayerList(List playerList) {
         this.playerList = playerList;
     }
+    public Player getPlayerByName(String name) { // 닉네임을 통해서 방에 속한 유저를 리턴함
+    	for (int i = 0; i < playerList.size(); i++) {
+    		Player player = (Player) playerList.get(i);
+            if (player.getName().equals(name)) {
+                return player; // 유저를 찾았다면
+            }
+        }
+        return null; // 찾는 유저가 없다면
+    }
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

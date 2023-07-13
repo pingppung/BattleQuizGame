@@ -215,50 +215,30 @@ public class JavaGameClientView extends JFrame {
 //							JavaGameClientRoom.AppendText(msg);
 						break;
 					case "500": 
-//						if(cm.data.equals("changePlayer")) {
-//							//다른 플레이어 화면에서 해당 플레이어 없어지도록
-//						}
-//						for(int i = 0; i < cm.playerlist.size(); i++) {
-//							AppendText(cm.playerlist.get(i)+"");
-//						}
-						
 						int idx = 0;
-						AppendText(user_name);
-						//AppendText(cm.playerlist.get(0));
 						for(String name : cm.playerlist.keySet()) {
 							JavaGameClientRoom.lblUserName[idx].setText(name);
-							ImageIcon character = new ImageIcon(cm.playerlist.get(name));
+							ImageIcon character = new ImageIcon(cm.playerlist.get(name).get(0));
 							JavaGameClientRoom.lblUserCharacter[idx].setIcon(character);
 							if (user_name.equals(name)) {
-								//AppendText(user_name + " "+ name);
 								JavaGameClientRoom.lblUserName[idx].setForeground(new Color(102, 102, 204));
 							}
-
+							if(cm.playerlist.get(name).get(1).equals("Ready")) {
+								JavaGameClientRoom.lblUserReady[idx].setVisible(true);
+							}
 							idx++;
 						}
-						//JavaGameClientRoom.lblUserName[user_idx].setForeground(new Color(102, 102, 204));
-//						for(int i = 0; i < cm.playerList.size(); i++) {
-//							JavaGameClientRoom.lblUserName[i].setText(cm.playerList.get(i).name);
-//							ImageIcon character = new ImageIcon(cm.playerList.get(i).character);
-//							JavaGameClientRoom.lblUserCharacter[i].setIcon(character);
-//							if (user_name.equals(cm.playerList.get(i).name)) {
-//								JavaGameClientRoom.lblUserName[i].setForeground(new Color(102, 102, 204));
-//							}
-//						}
-//						for(int i = 0; i < cm.players_name.length; i++) {
-//							JavaGameClientRoom.Player player = new JavaGameClientRoom.Player(cm.players_name[i], cm.players_character[i]);
-//							JavaGameClientRoom.PlayerList.add(player);
-//							if(cm.players_name[i] != null && cm.players_character[i] != null) {
-//								JavaGameClientRoom.lblUserName[i].setText(cm.players_name[i]);
-//								ImageIcon character = new ImageIcon(cm.players_character[i]);
-//								JavaGameClientRoom.lblUserCharacter[i].setIcon(character);
-//								if (user_name.equals(cm.players_name[i])) {
-//									JavaGameClientRoom.lblUserName[i].setForeground(new Color(102, 102, 204));
-//									
-//								}
-//							} 
-//						}
-
+						break;
+					case "550":
+						int idx2 = 0;
+						for(String name : cm.playerlist.keySet()) {
+							if(cm.username.equals(name)) { //ready 버튼 누른 유저 찾기
+								if(cm.playerlist.get(name).get(1).equals("Ready"))
+									JavaGameClientRoom.lblUserReady[idx2].setVisible(true);
+								else JavaGameClientRoom.lblUserReady[idx2].setVisible(false);
+							}
+							idx2++;
+						}
 						break;
 					case "600":
 						
