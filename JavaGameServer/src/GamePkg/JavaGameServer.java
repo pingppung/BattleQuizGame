@@ -1,6 +1,5 @@
 package GamePkg;
 
-
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +13,8 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -43,6 +43,7 @@ public class JavaGameServer extends JFrame {
 	private static final int BUF_LEN = 128; // Windows 처럼 BUF_LEN 을 정의
 
 	private int roomId = 0;
+
 	/**
 	 * Launch the application.
 	 */
@@ -162,13 +163,13 @@ public class JavaGameServer extends JFrame {
 		public String user_name = "";
 		public int room_id;
 		public String user_status;
-		
+
 		public UserService(Socket client_socket) {
 			// TODO Auto-generated constructor stub
 			// 매개변수로 넘어온 자료 저장
 			this.client_socket = client_socket;
 			this.user_vc = UserVec;
-			//this.room_id = room_id;
+			// this.room_id = room_id;
 			try {
 				oos = new ObjectOutputStream(client_socket.getOutputStream());
 				oos.flush();
@@ -181,17 +182,18 @@ public class JavaGameServer extends JFrame {
 
 		public void Login() {
 			AppendText("새로운 참가자 " + user_name + " 입장.");
-			WriteOne("Welcome to Java chat server\n");
-			WriteOne(user_name + "님 환영합니다.\n"); // 연결된 사용자에게 정상접속을 알림
-			
+			// WriteRoom("Welcome to Java chat server\n");
+			WriteRoom(user_name + "님 환영합니다.\n"); // 연결된 사용자에게 정상접속을 알림
+			// WriteRoomObject(msg);
 			String msg = "[" + user_name + "]님이 입장 하였습니다.\n";
-			WriteOthers(msg); // 아직 user_vc에 새로 입장한 user는 포함되지 않았다.
+			WriteRoom(msg); // 아직 user_vc에 새로 입장한 user는 포함되지 않았다.
 		}
 
 		public void Logout() {
 			String msg = "[" + user_name + "]님이 퇴장 하였습니다.\n";
 			UserVec.removeElement(this); // Logout한 현재 객체를 벡터에서 지운다
-			WriteAll(msg); // 나를 제외한 다른 User들에게 전송
+			// WriteAll(msg); // 나를 제외한 다른 User들에게 전송
+			WriteRoom(msg);
 			AppendText("사용자 " + "[" + user_name + "] 퇴장. 현재 참가자 수 " + UserVec.size());
 		}
 
@@ -203,6 +205,7 @@ public class JavaGameServer extends JFrame {
 					user.WriteOne(str);
 			}
 		}
+
 		// 모든 User들에게 Object를 방송. 채팅 message와 image object를 보낼 수 있다
 		public void WriteAllObject(Object ob) {
 			for (int i = 0; i < user_vc.size(); i++) {
@@ -220,25 +223,47 @@ public class JavaGameServer extends JFrame {
 					user.WriteOne(str);
 			}
 		}
-		// 나를 제외한 User들에게 방송. 각각의 UserService Thread의 WriteONe() 을 호출한다.
-		public void WriteOthersObject(Object ob) {
+
+		// 같은 룸에 있는 User들에게 방송. 채팅 message를 보낼 수 있다
+		public void WriteRoom(String str) {
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
-				if (user != this && user.user_status == "O")
-					user.WriteOneObject(ob);
+				// AppendText(String.valueOf(user.room_id));
+				if (user.room_id == roomId && user.user_status == "O") {
+					user.WriteOne(str);
+				}
 			}
 		}
+
 		// 같은 룸에 있는 User들에게 방송(본인 제외). 채팅 message와 player object를 보낼 수 있다
+		// 왜? 룸채팅만 하면 socket closed가 되는지
+		// 채팅만 하고 나면 아무것도 안됨 연결이 끊김 - 렉먹은 마냥
+		//
+		public void WriteRoomObject2(Object ob) {
+			for (int i = 0; i < user_vc.size(); i++) {
+				UserService user = (UserService) user_vc.elementAt(i);
+				// AppendText(String.valueOf(user.room_id));
+
+				if (user.room_id == roomId && user.user_status == "O") {
+					// AppendText(user.user_name);
+					user.WriteOneObject(ob);
+
+				} // Room getRoom = RoomManager.getRoom(roomId - 1);
+					// AppendText(user.client_socket.isClosed()+"");
+			}
+
+		}
+
 		public void WriteRoomObject(Object ob) {
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
-				AppendText(String.valueOf(user.room_id));
+				// AppendText(String.valueOf(user.room_id));
 				if (user.room_id == roomId && user.user_status == "O") {
-					
 					user.WriteOneObject(ob);
 				}
 			}
 		}
+
 		// Windows 처럼 message 제외한 나머지 부분은 NULL 로 만들기 위한 함수
 		public byte[] MakePacket(String msg) {
 			byte[] packet = new byte[BUF_LEN];
@@ -299,19 +324,19 @@ public class JavaGameServer extends JFrame {
 				Logout(); // 에러가난 현재 객체를 벡터에서 지운다
 			}
 		}
+
 		public void WriteOneObject(Object ob) {
 			try {
-			    oos.writeObject(ob);
-			} 
-			catch (IOException e) {
-				AppendText("oos.writeObject(ob) error");		
+				oos.writeObject(ob);
+			} catch (IOException e) {
+				AppendText("oos.writeObject(ob) error");
 				try {
 					ois.close();
 					oos.close();
 					client_socket.close();
 					client_socket = null;
 					ois = null;
-					oos = null;				
+					oos = null;
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -319,7 +344,7 @@ public class JavaGameServer extends JFrame {
 				Logout();
 			}
 		}
-		
+
 		public void run() {
 			while (true) { // 사용자 접속을 계속해서 받기 위해 while문
 				try {
@@ -339,7 +364,7 @@ public class JavaGameServer extends JFrame {
 						break;
 					if (obcm instanceof ChatMsg) {
 						cm = (ChatMsg) obcm;
-						AppendObject(cm);
+						// AppendObject(cm);
 					} else
 						continue;
 					if (cm.code.matches("100")) {
@@ -351,13 +376,9 @@ public class JavaGameServer extends JFrame {
 							if (user == this && user.user_status == "O")
 								port = user.client_socket.getPort();
 						}
-					
-						
-						
-						Login();
-						
+
 					} else if (cm.code.matches("200")) {
-						
+
 						msg = String.format("[%s] %s", cm.username, cm.data);
 						AppendText(msg); // server 화면에 출력
 						String[] args = msg.split(" "); // 단어들을 분리한다.
@@ -391,112 +412,146 @@ public class JavaGameServer extends JFrame {
 									}
 									// /to 빼고.. [귓속말] [user1] Hello user2..
 									user.WritePrivate(args[0] + " " + msg2 + "\n");
-									//user.WriteOne("[귓속말] " + args[0] + " " + msg2 + "\n");
+									// user.WriteOne("[귓속말] " + args[0] + " " + msg2 + "\n");
 									break;
 								}
 							}
 						} else { // 일반 채팅 메시지
 							user_status = "O";
-							//WriteAll(msg + "\n"); // Write All
+							// WriteAll(msg + "\n"); // Write All
 							WriteAllObject(cm);
 						}
+					} else if (cm.code.matches("250")) { // 게임방 message
+						// ChatMsg obcm1 = new ChatMsg(cm.username, "250", cm.data);
+						for (int i = 0; i < user_vc.size(); i++) {
+							UserService user = (UserService) user_vc.elementAt(i);
+							if (user.user_name.equals(cm.username) && user.user_status == "O") {
+								roomId = user.room_id; // 유저가 속한 룸id
+								break;
+							}
+						}
+						// AppendText(cm.username+" "+cm.data);
+						WriteRoomObject2(cm);
+
 					} else if (cm.code.matches("400")) { // logout message 처리
 						Logout();
-						break;
-					} else if (cm.code.matches("500")){
+						// break;
+					} else if (cm.code.matches("500")) {
 						ChatMsg obcm1 = new ChatMsg(cm.username, "500", "playerlist");
-						
-						//플레이어 로그인
+
+						// 플레이어 로그인
 						Player player = new Player(user_name, cm.character);
 						player.setSocket(socket);
 						player.setPlayerStatus(PlayerStatus.Status.StandBy);
-						//roomlist 마지막 방에서 플레이어 4명일 경우 새로 방 만들기
+						// roomlist 마지막 방에서 플레이어 4명일 경우 새로 방 만들기
 						int roomCnt = RoomManager.roomCount();
 						Room room = null;
-						if(roomCnt == 0) { //게임방이 아무것도 없을때 or 방이 있는데 4명으로 정원초과일때
+						if (roomCnt == 0) { // 게임방이 아무것도 없을때 or 방이 있는데 4명으로 정원초과일때
 							room = RoomManager.createRoom(player);
 						} else {
-							boolean newRoom = false; //새로운 방을 만들어야하는지 
-							for(int i = 0; i < roomCnt; i++) {
+							boolean newRoom = false; // 새로운 방을 만들어야하는지
+							for (int i = 0; i < roomCnt; i++) {
 								room = RoomManager.getRoom(i);
-								if(room.getPlayerSize() <= 3) { //3명 이하일때만 들어가기
+								if (room.getPlayerSize() <= 3) { // 3명 이하일때만 들어가기
 									room.enterPlayer(player);
 									newRoom = false;
 									break;
 								} else {
 									newRoom = true;
 								}
-								//AppendText(String.valueOf("입장후 : "+room.getPlayerSize()));
+								// AppendText(String.valueOf("입장후 : "+room.getPlayerSize()));
 							}
-							if(newRoom) { //룸에 빈자리가 없어 새로운 방을 만들어야하는 경우
+							if (newRoom) { // 룸에 빈자리가 없어 새로운 방을 만들어야하는 경우
 								room = RoomManager.createRoom(player);
-								
+
 							}
 						}
-						//본인이 속한 방의 유저리스트들을 찾아서 클라이언트에게 넘겨주기
+
+						// 본인이 속한 방의 유저리스트들을 찾아서 클라이언트에게 넘겨주기
 						Room getRoom = RoomManager.getRoom(room);
-						room_id = getRoom.getId(); //입장하는 방의 id를 userservice에 저장 
+						room_id = getRoom.getId(); // 입장하는 방의 id를 userservice에 저장
 						roomId = room_id; // room에 있는 유저한테 데이터 보낼때 비교할 변수
 						List playerlist = getRoom.getPlayerList();
 
-						//AppendText(room.getPlayerSize()+"");
-						for(int i = 0; i < playerlist.size(); i++) {
+						// AppendText(room.getPlayerSize()+"");
+						for (int i = 0; i < playerlist.size(); i++) {
 							Player p = (Player) playerlist.get(i);
-							//왜 순서가 바뀔까.. hashset ->linkedHashset으로 변경해서 해결
-							
-							obcm1.playerlist.put(p.getName(), Arrays.asList(p.getCharacter(),p.getPlayerStatus().toString()));
-						}
-						WriteRoomObject(obcm1); //방안에 있는 사람들한테만 전달 - user roomid를 어떻게 넣어줄건지 생각해보기
+							// 왜 순서가 바뀔까.. hashset ->linkedHashset으로 변경해서 해결
 
-					} else if(cm.code.matches("550")){ //ready 
-						//여기서 해당 유저에 대한 상태를 레디로 바꾸고 방안에 있는 사람들한테 유저 상태 변경 전달
-						
+							obcm1.playerlist.put(p.getName(),
+									Arrays.asList(p.getCharacter(), p.getPlayerStatus().toString()));
+						}
+						AppendText(getRoom.getId() + "" + player.getName());
+						Login();
+						WriteRoomObject(obcm1); // 방안에 있는 사람들한테만 전달 - user roomid를 어떻게 넣어줄건지 생각해보기
+
+					} else if (cm.code.matches("550")) { // ready
+						// 여기서 해당 유저에 대한 상태를 레디로 바꾸고 방안에 있는 사람들한테 유저 상태 변경 전달
+
 						for (int i = 0; i < user_vc.size(); i++) {
 							UserService user = (UserService) user_vc.elementAt(i);
 							if (user.user_name.equals(cm.username) && user.user_status == "O") {
-								roomId = user.room_id; //유저가 속한 룸id 
+								roomId = user.room_id; // 유저가 속한 룸id
+								break;
 							}
 						}
 						ChatMsg obcm1 = new ChatMsg(cm.username, "550", "playerReadyList");
-						
-						//유저가 속한 roomId로 room안에 있는 playerList가져오기
-						Room getRoom = RoomManager.getRoom(roomId-1);  //roomId가 1부터 시작해서 -1해서 범위벗어나지 않게
-						Player player = getRoom.getPlayerByName(cm.username);
-						AppendText(cm.data);
-						if(cm.data.equals("준비완료")) {
-							player.setPlayerStatus(PlayerStatus.Status.Ready);
-						} else {
-							player.setPlayerStatus(PlayerStatus.Status.StandBy);
+						AppendText("player 방 번호 " + roomId);
+						// 유저가 속한 roomId로 room안에 있는 playerList가져오기
+						// **Room getRoom = RoomManager.getRoom(roomId - 1); // roomId가 1부터 시작해서 -1해서
+						// 범위벗어나지 않게
+						Room getRoom = getRoomById(roomId);
+						if(getRoom != null) {
+							Player player = getRoom.getPlayerByName(cm.username);
+							if (cm.data.equals("준비완료")) {
+								player.setPlayerStatus(PlayerStatus.Status.Ready);
+							} else {
+								player.setPlayerStatus(PlayerStatus.Status.StandBy);
+							}
 						}
 						
+
 						List playerlist = getRoom.getPlayerList();
-						for(int i = 0; i < playerlist.size(); i++) {
+						for (int i = 0; i < playerlist.size(); i++) {
 							Player p = (Player) playerlist.get(i);
-							obcm1.playerlist.put(p.getName(), Arrays.asList(p.getCharacter(),p.getPlayerStatus().toString()));
+							obcm1.playerlist.put(p.getName(),
+									Arrays.asList(p.getCharacter(), p.getPlayerStatus().toString()));
 						}
 						WriteRoomObject(obcm1);
-						
+
 					} else if (cm.code.matches("600")) { // 게임방->로비 이동
-//						AppendText(PlayerList.iterator().next().name.equals(cm.UserName) +" ");
-//						for (int i = 0 ; i < PlayerList.size(); i++){
-//				            if(PlayerList.get(i).name.equals(cm.username)) {
-//				            	PlayerList.remove(i);
-//				            	PlayerCnt--;
-//				            	break;
-//				            }
-//				        }
-//						ChatMsg obcm1 = new ChatMsg("SEVER", "500", "changePlayer");
-//						obcm1.players_name = new String[4];
-//						obcm1.players_character = new String[4];
-//						for(int i = 0; i < PlayerCnt; i++) {
-//							obcm1.players_name[i] = PlayerList.get(i).name;
-//							obcm1.players_character[i] = PlayerList.get(i).character;
-//						}
-//						WriteAllObject(obcm1);
-						break;
-					}else { // 300, 500, ... 기타 object는 모두 방송한다.
+						for (int i = 0; i < user_vc.size(); i++) {
+							UserService user = (UserService) user_vc.elementAt(i);
+							if (user.user_name.equals(cm.username) && user.user_status == "O") {
+								roomId = user.room_id; // 유저가 속한 룸id
+								user.room_id = 0; // 룸번호 초기화
+								break;
+							}
+						}
+						// **Room getRoom = RoomManager.getRoom(roomId - 1);
+						Room getRoom = getRoomById(roomId);
+						if(getRoom != null) {
+							Player player = getRoom.getPlayerByName(cm.username);
+							boolean remove = getRoom.exitPlayer(player);
+							WriteOneObject(cm);
+							if (!remove) { // 방 안에 사람이 아직 남아있을 경우
+								ChatMsg obcm1 = new ChatMsg("SERVER", "450", "changePlayer"); // 방안에 있는 유저들 플레이어리스트 초기화
+								WriteRoomObject(obcm1);
+								ChatMsg obcm2 = new ChatMsg("SERVER", "500", "changePlayer"); // 다시 리스트
+								List playerlist = getRoom.getPlayerList();
+								for (int i = 0; i < playerlist.size(); i++) {
+									Player p = (Player) playerlist.get(i);
+									obcm2.playerlist.put(p.getName(),
+											Arrays.asList(p.getCharacter(), p.getPlayerStatus().toString()));
+								}
+								WriteRoomObject(obcm2);
+
+							}
+						}
+						
+					} else { // 300, 500, ... 기타 object는 모두 방송한다.
 						WriteAllObject(cm);
-					} 
+					}
 				} catch (IOException e) {
 					AppendText("ois.readObject() error");
 					try {
@@ -512,7 +567,20 @@ public class JavaGameServer extends JFrame {
 					} // catch문 끝
 				} // 바깥 catch문끝
 			} // while
-		} // run
+		}
+
+		public Room getRoomById(int id) {
+			int roomCnt = RoomManager.roomCount();
+			Room room = null;
+			for (int i = 0; i < roomCnt; i++) {
+				room = RoomManager.getRoom(i);
+				if (room.getId() == id) {
+					return room;
+				}
+
+			}
+			return room;
+		}
 	}
 
 }

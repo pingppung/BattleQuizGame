@@ -50,6 +50,16 @@ public class Room {
         }
         return null; // 찾는 유저가 없다면
     }
+    public boolean exitPlayer(Player player) {
+		player.exitRoom(this);
+		playerList.remove(player); // 해당 유저를 방에서 내보냄
+
+		if (playerList.size() < 1) { // 모든 인원이 다 방을 나갔다면
+			RoomManager.removeRoom(this); // 이 방을 제거한다.
+			return true; //방을 제거하면 true를 리턴
+		} 
+		return false;
+	}
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

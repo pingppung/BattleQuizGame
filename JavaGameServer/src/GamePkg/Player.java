@@ -19,6 +19,7 @@ public class Player{
 		this.room = room; // 유저가 속한 방을 룸으로 변경한다. 
 	}
 	public void exitRoom(Room room){
+        this.playerStatus = PlayerStatus.Status.View;
         this.room = null;
     }
 	

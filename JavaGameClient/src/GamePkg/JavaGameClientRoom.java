@@ -6,13 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.net.Socket;
+import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -36,15 +30,6 @@ public class JavaGameClientRoom extends JFrame {
 	private static String username;
 	private static String character;
 
-	private Socket socket; // 연결소켓
-	private InputStream is;
-	private OutputStream os;
-	private DataInputStream dis;
-	private DataOutputStream dos;
-
-	private ObjectInputStream ois;
-	private ObjectOutputStream oos;
-
 	private JPanel contentPane;
 	private JPanel topPane = new JPanel();
 
@@ -57,7 +42,7 @@ public class JavaGameClientRoom extends JFrame {
 	public static JLabel[] lblUserName = new JLabel[4];
 	public static JLabel[] lblUserCharacter = new JLabel[4];
 
-	private static JButton btn_Ready = new JButton("준비완료");
+	public static JButton btn_Ready = new JButton("준비완료");
 	public static JLabel[] lblUserReady = new JLabel[4];
 
 	private static JButton btn_Exit = new JButton("Back");
@@ -67,6 +52,17 @@ public class JavaGameClientRoom extends JFrame {
 		this.username = username;
 		this.character = character;
 		initWindow();
+		
+		ReadyButtonClick action_ready = new ReadyButtonClick();
+		btn_Ready.addActionListener(action_ready);
+
+		RoomExitButtonClick action_exit = new RoomExitButtonClick();
+		btn_Exit.addActionListener(action_exit);
+
+		TextSendAction action = new TextSendAction();
+		btn_Send.addActionListener(action);
+		txtInput.addActionListener(action);
+		txtInput.requestFocus();
 	}
 
 	private void initWindow() {
@@ -142,7 +138,6 @@ public class JavaGameClientRoom extends JFrame {
 			lblUserReady[i].setFont(new Font("배달의민족 도현", Font.BOLD, 20));
 			lblUserReady[i].setBorder(new LineBorder(new Color(0, 0, 0), 0));
 			lblUserReady[i].setBounds(61 + i * 180, 485, 121, 40);
-			
 
 			contentPane.add(lblUserName[i]);
 			contentPane.add(lblUserCharacter[i]);
@@ -150,11 +145,7 @@ public class JavaGameClientRoom extends JFrame {
 		}
 
 		setVisible(true);
-		ReadyButtonClick action_ready = new ReadyButtonClick();
-		btn_Ready.addActionListener(action_ready);
-
-		RoomExitButtonClick action_exit = new RoomExitButtonClick();
-		btn_Exit.addActionListener(action_exit);
+		
 
 	}
 
@@ -162,12 +153,11 @@ public class JavaGameClientRoom extends JFrame {
 	class ReadyButtonClick implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-
-			ChatMsg obcm = new ChatMsg(username, "550", btn_Ready.getText()); //ready변경사항 서버에 보내기 (다른 유저들 화면에서 띄우게)
-			AppendText(btn_Ready.getText());
-			if(btn_Ready.getText().equals("준비완료")) { //대기 -> 레디 상태
+			ChatMsg obcm = new ChatMsg(username, "550", btn_Ready.getText()); // ready변경사항 서버에 보내기 (다른 유저들 화면에서 띄우게)
+			// AppendText(btn_Ready.getText());
+			if (btn_Ready.getText().equals("준비완료")) { // 대기 -> 레디 상태
 				btn_Ready.setText("준비취소");
-			} else { //레디 -> 대기 상태
+			} else { // 레디 -> 대기 상태
 				btn_Ready.setText("준비완료");
 			}
 			JavaGameClientView.SendObject(obcm);
@@ -180,19 +170,32 @@ public class JavaGameClientRoom extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			ChatMsg cm = new ChatMsg(username, "600", "RoomExit");
 			JavaGameClientView.SendObject(cm);
+			dispose();
+		}
+	}
+
+	// keyboard enter key 치면 서버로 전송
+	class TextSendAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// Send button을 누르거나 메시지 입력하고 Enter key 치면
+			if (e.getSource() == btn_Send || e.getSource() == txtInput) {
+				String msg = null;
+				// msg = String.format("[%s] %s\n", UserName, txtInput.getText());
+				msg = txtInput.getText();
+				SendMessage(msg);
+				txtInput.setText(""); // 메세지를 보내고 나면 메세지 쓰는창을 비운다.
+				txtInput.requestFocus(); // 메세지를 보내고 커서를 다시 텍스트 필드로 위치시킨다
+				if (msg.contains("/exit")) // 종료 처리
+					System.exit(0);
+			}
 		}
 	}
 
 	// 화면에 출력
 	public synchronized static void AppendText(String msg) {
-		// textArea.append(msg + "\n");
-		// AppendIcon(icon1);
 		msg = msg.trim(); // 앞뒤 blank와 \n을 제거한다.
 		int len = textArea.getDocument().getLength();
-		// 끝으로 이동
-		// textArea.setCaretPosition(len);
-		// textArea.replaceSelection(msg + "\n");
-
 		StyledDocument doc = textArea.getStyledDocument();
 		SimpleAttributeSet left = new SimpleAttributeSet();
 		StyleConstants.setAlignment(left, StyleConstants.ALIGN_LEFT);
@@ -205,6 +208,40 @@ public class JavaGameClientRoom extends JFrame {
 			e.printStackTrace();
 		}
 
+	}
+
+	public static void SendMessage(String msg) {
+		try {
+			ChatMsg obcm = new ChatMsg(username, "250", msg);
+			JavaGameClientView.oos.writeObject(obcm);
+		} catch (IOException e) {
+			AppendText("oos.writeObject() error");
+			try {
+				JavaGameClientView.ois.close();
+				JavaGameClientView.oos.close();
+				JavaGameClientView.socket.close();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				System.exit(0);
+			}
+		}
+	}
+
+	// 화면 우측에 출력
+	public synchronized static void AppendTextR(String msg) {
+		msg = msg.trim(); // 앞뒤 blank와 \n을 제거한다.
+		StyledDocument doc = textArea.getStyledDocument();
+		SimpleAttributeSet right = new SimpleAttributeSet();
+		StyleConstants.setAlignment(right, StyleConstants.ALIGN_RIGHT);
+		StyleConstants.setForeground(right, Color.BLUE);
+		doc.setParagraphAttributes(doc.getLength(), 1, right, false);
+		try {
+			doc.insertString(doc.getLength(), msg + "\n", right);
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
