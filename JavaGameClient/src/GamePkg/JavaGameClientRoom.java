@@ -10,9 +10,11 @@ import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -30,8 +32,8 @@ public class JavaGameClientRoom extends JFrame {
 	private static String username;
 	private static String character;
 
-	private JPanel contentPane;
-	private JPanel topPane = new JPanel();
+	private static JPanel contentPane;
+	private static JPanel topPane = new JPanel();
 
 	// jtextarea에 스크롤 넣기
 	private static JTextPane textArea = new JTextPane();
@@ -42,17 +44,29 @@ public class JavaGameClientRoom extends JFrame {
 	public static JLabel[] lblUserName = new JLabel[4];
 	public static JLabel[] lblUserCharacter = new JLabel[4];
 
+	// send, ready, exit 한번에 배열로 묶으면 init함수부분이 깔끔해질 수는 있는데
 	public static JButton btn_Ready = new JButton("준비완료");
 	public static JLabel[] lblUserReady = new JLabel[4];
 
 	private static JButton btn_Exit = new JButton("Back");
 
+	public static JLabel[] lblScore = new JLabel[4]; // 각 플레이어 점수
+
+	public static JProgressBar timebar;
+	public static JLabel lblTime = new JLabel("10");
+
+	public static JPanel QuizPane = new JPanel();
+	public static JLabel lblQuestion = new JLabel();
+	public static JButton[] btn_quizV = new JButton[4];
+	public static JButton[] btn_OX = new JButton[2];
+
+	private JFileChooser fileComponent = new JFileChooser();
+	
 	public JavaGameClientRoom(String username, String character) {
 		// TODO Auto-generated constructor stub
 		this.username = username;
 		this.character = character;
 		initWindow();
-		
 		ReadyButtonClick action_ready = new ReadyButtonClick();
 		btn_Ready.addActionListener(action_ready);
 
@@ -79,6 +93,9 @@ public class JavaGameClientRoom extends JFrame {
 				// super.paintComponent(g);
 			}
 		};
+		
+		//fileComponent.fil
+		
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -139,13 +156,21 @@ public class JavaGameClientRoom extends JFrame {
 			lblUserReady[i].setBorder(new LineBorder(new Color(0, 0, 0), 0));
 			lblUserReady[i].setBounds(61 + i * 180, 485, 121, 40);
 
+			lblScore[i] = new JLabel("0000");
+			lblScore[i].setVisible(false);
+			lblScore[i].setHorizontalAlignment(SwingConstants.CENTER);
+			lblScore[i].setForeground(Color.WHITE);
+			lblScore[i].setFont(new Font("배달의민족 도현", Font.BOLD, 20));
+			lblScore[i].setBorder(new LineBorder(new Color(0, 0, 0), 0));
+			lblScore[i].setBounds(61 + i * 180, 485, 121, 40);
+
 			contentPane.add(lblUserName[i]);
 			contentPane.add(lblUserCharacter[i]);
 			contentPane.add(lblUserReady[i]);
+			contentPane.add(lblScore[i]);
 		}
-
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); //x버튼 눌러도 반응없게
 		setVisible(true);
-		
 
 	}
 
@@ -168,7 +193,7 @@ public class JavaGameClientRoom extends JFrame {
 	class RoomExitButtonClick implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			ChatMsg cm = new ChatMsg(username, "600", "RoomExit");
+			ChatMsg cm = new ChatMsg(username, "400", "RoomExit");
 			JavaGameClientView.SendObject(cm);
 			dispose();
 		}
@@ -242,6 +267,67 @@ public class JavaGameClientRoom extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public static void GameStart() {
+		// 타이머
+		timebar = new JProgressBar();
+		timebar.setForeground(new Color(153, 153, 204));
+		timebar.setValue(10);
+		timebar.setMaximum(10);
+		timebar.setBounds(250, 15, 309, 30);
+		contentPane.add(timebar);
+
+		lblTime.setFont(new Font("배달의민족 도현", Font.PLAIN, 20));
+		lblTime.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTime.setBounds(200, 10, 50, 39);
+		contentPane.add(lblTime);
+
+
+		for (int i = 0; i < 4; i++) {
+			lblUserReady[i].setVisible(false);
+			lblScore[i].setVisible(true);
+		}
+		
+		// 퀴즈 패널
+		QuizPane.setBackground(Color.WHITE);
+		QuizPane.setBounds(20, 70, 740, 200);
+		QuizPane.setLayout(null);
+		//문제
+		lblQuestion.setText("START");
+		lblQuestion.setFont(new Font("배달의민족 도현", Font.PLAIN, 60));
+		lblQuestion.setBounds(20, 70, 700, 70);
+		lblQuestion.setHorizontalAlignment(SwingConstants.CENTER);
+		QuizPane.add(lblQuestion);
+		
+		//객관식 버튼, ox버튼
+		for(int i = 0; i < 4; i++) {
+			btn_quizV[i] = new JButton(String.valueOf(i));
+			//btn_quizV[i].setBackground(Color.WHITE);
+			btn_quizV[i].setFont(new Font("나눔스퀘어", Font.PLAIN, 12));
+			if(i < 2) {
+				btn_quizV[i].setBounds(30+i*360, 70, 315, 50);
+			} else {
+				btn_quizV[i].setBounds(30+(i-2)*360, 130, 315, 50);
+			}
+			QuizPane.add(btn_quizV[i]);
+
+			btn_quizV[i].setVisible(false);
+		}
+		for(int i = 0; i < 2; i++) {
+			if(i == 0) btn_OX[i] = new JButton("O");
+			if(i == 1) btn_OX[i] = new JButton("X");
+			btn_OX[i].setFont(new Font("나눔스퀘어", Font.PLAIN, 60));
+			btn_OX[i].setBounds(30+i*360, 70, 315, 100);
+			QuizPane.add(btn_OX[i]);
+			btn_OX[i].setVisible(false);
+		}
+		
+		contentPane.add(QuizPane);
+		contentPane.add(topPane); //이걸 안하면 타이머가 topPane보다 밑에 위치하여 안보이는 것 같음
+	}
+	public void Question() {
+		
 	}
 
 }

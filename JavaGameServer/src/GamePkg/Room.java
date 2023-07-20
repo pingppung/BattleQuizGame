@@ -22,7 +22,24 @@ public class Room {
 		player.enterRoom(this);
 		playerList.add(player);
 	}
+    public boolean exitPlayer(Player player) {
+		player.exitRoom(this);
+		playerList.remove(player); // 해당 유저를 방에서 내보냄
 
+		if (playerList.size() < 1) { // 모든 인원이 다 방을 나갔다면
+			RoomManager.removeRoom(this); // 이 방을 제거한다.
+			return true; //방을 제거하면 true를 리턴
+		} 
+		return false;
+	}
+    public void close() {
+		for (int i = 0; i < playerList.size(); i++) {
+			Player player = (Player) playerList.get(i);
+            player.exitRoom(this);
+        }
+        this.playerList.clear();
+        this.playerList = null;
+    }
 	public int getPlayerSize() { // 유저의 수를 리턴
         return playerList.size();
     }

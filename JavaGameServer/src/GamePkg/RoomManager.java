@@ -32,6 +32,10 @@ public class RoomManager {
             return null;
         }
     }
+    public static void removeRoom(Room room) {
+        room.close();
+        roomList.remove(room); // 전달받은 룸을 제거한다.
+    }
 	public static int roomCount() {
         return roomList.size();
     }

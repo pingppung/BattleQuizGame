@@ -13,8 +13,11 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -433,9 +436,38 @@ public class JavaGameServer extends JFrame {
 						// AppendText(cm.username+" "+cm.data);
 						WriteRoomObject2(cm);
 
-					} else if (cm.code.matches("400")) { // logout message 처리
-						Logout();
+					} else if (cm.code.matches("400")) { // exit버튼
+						// Logout();
 						// break;
+						for (int i = 0; i < user_vc.size(); i++) {
+							UserService user = (UserService) user_vc.elementAt(i);
+							if (user.user_name.equals(cm.username) && user.user_status == "O") {
+								roomId = user.room_id; // 유저가 속한 룸id
+								user.room_id = 0; // 룸번호 초기화
+								break;
+							}
+						}
+						// **Room getRoom = RoomManager.getRoom(roomId - 1);
+						Room getRoom = getRoomById(roomId);
+						if (getRoom != null) {
+							Player player = getRoom.getPlayerByName(cm.username);
+							boolean remove = getRoom.exitPlayer(player);
+							WriteOneObject(cm);
+							if (!remove) { // 방 안에 사람이 아직 남아있을 경우
+								ChatMsg obcm1 = new ChatMsg("SERVER", "450", "changePlayer"); // 방안에 있는 유저들 플레이어리스트 초기화
+								WriteRoomObject(obcm1);
+								ChatMsg obcm2 = new ChatMsg("SERVER", "500", "changePlayer"); // 다시 리스트
+								List playerlist = getRoom.getPlayerList();
+								for (int i = 0; i < playerlist.size(); i++) {
+									Player p = (Player) playerlist.get(i);
+									obcm2.playerlist.put(p.getName(),
+											Arrays.asList(p.getCharacter(), p.getPlayerStatus().toString()));
+								}
+								WriteRoomObject(obcm2);
+
+							}
+						}
+
 					} else if (cm.code.matches("500")) {
 						ChatMsg obcm1 = new ChatMsg(cm.username, "500", "playerlist");
 
@@ -496,12 +528,12 @@ public class JavaGameServer extends JFrame {
 							}
 						}
 						ChatMsg obcm1 = new ChatMsg(cm.username, "550", "playerReadyList");
-						AppendText("player 방 번호 " + roomId);
+						// AppendText("player 방 번호 " + roomId);
 						// 유저가 속한 roomId로 room안에 있는 playerList가져오기
 						// **Room getRoom = RoomManager.getRoom(roomId - 1); // roomId가 1부터 시작해서 -1해서
 						// 범위벗어나지 않게
 						Room getRoom = getRoomById(roomId);
-						if(getRoom != null) {
+						if (getRoom != null) {
 							Player player = getRoom.getPlayerByName(cm.username);
 							if (cm.data.equals("준비완료")) {
 								player.setPlayerStatus(PlayerStatus.Status.Ready);
@@ -509,46 +541,28 @@ public class JavaGameServer extends JFrame {
 								player.setPlayerStatus(PlayerStatus.Status.StandBy);
 							}
 						}
-						
 
+						int count = 0;
 						List playerlist = getRoom.getPlayerList();
 						for (int i = 0; i < playerlist.size(); i++) {
 							Player p = (Player) playerlist.get(i);
+							if (p.getPlayerStatus().toString().equals("Ready"))
+								count++;
 							obcm1.playerlist.put(p.getName(),
 									Arrays.asList(p.getCharacter(), p.getPlayerStatus().toString()));
 						}
-						WriteRoomObject(obcm1);
-
-					} else if (cm.code.matches("600")) { // 게임방->로비 이동
-						for (int i = 0; i < user_vc.size(); i++) {
-							UserService user = (UserService) user_vc.elementAt(i);
-							if (user.user_name.equals(cm.username) && user.user_status == "O") {
-								roomId = user.room_id; // 유저가 속한 룸id
-								user.room_id = 0; // 룸번호 초기화
-								break;
-							}
+						if (count == 4) {
+							obcm1.code = "600";
+							obcm1.data = "GameStart"; // 게임 시작한다고 클라이언트에게 알리기 "600"
+							WriteRoomObject(obcm1);
+							RandomQuiz(obcm1); // 게임 시작하고 start표시 띄운다음 했으면 좋겠는데 일단 바로 시작
 						}
-						// **Room getRoom = RoomManager.getRoom(roomId - 1);
-						Room getRoom = getRoomById(roomId);
-						if(getRoom != null) {
-							Player player = getRoom.getPlayerByName(cm.username);
-							boolean remove = getRoom.exitPlayer(player);
-							WriteOneObject(cm);
-							if (!remove) { // 방 안에 사람이 아직 남아있을 경우
-								ChatMsg obcm1 = new ChatMsg("SERVER", "450", "changePlayer"); // 방안에 있는 유저들 플레이어리스트 초기화
-								WriteRoomObject(obcm1);
-								ChatMsg obcm2 = new ChatMsg("SERVER", "500", "changePlayer"); // 다시 리스트
-								List playerlist = getRoom.getPlayerList();
-								for (int i = 0; i < playerlist.size(); i++) {
-									Player p = (Player) playerlist.get(i);
-									obcm2.playerlist.put(p.getName(),
-											Arrays.asList(p.getCharacter(), p.getPlayerStatus().toString()));
-								}
-								WriteRoomObject(obcm2);
+						else WriteRoomObject(obcm1);
 
-							}
-						}
-						
+						// 여기서 만약 4명이 전부다 ready상태이면 게임 시작하도록
+
+					} else if (cm.code.matches("600")) { // 게임 start
+
 					} else { // 300, 500, ... 기타 object는 모두 방송한다.
 						WriteAllObject(cm);
 					}
@@ -581,6 +595,54 @@ public class JavaGameServer extends JFrame {
 			}
 			return room;
 		}
+
+		// 퀴즈 랜덤
+		public void RandomQuiz(ChatMsg obcm1) {
+
+			JavaGameServerQuiz quiz = new JavaGameServerQuiz();
+		
+			Timer timer = new Timer(true);
+			TimerTask m_task = new TimerTask() {
+				int MCQ_count = 1, OX_count = 1;
+				@Override
+
+				public void run() {
+					ChatMsg obcm1 = new ChatMsg("SERVER", "650", "Question");
+					 obcm1.quiz.clear();
+					int QuizType = (int) (Math.random() * 2 + 1); // 1 - 객관식, 2- ox
+					AppendText(QuizType+"");
+					if (MCQ_count + OX_count >= 11)
+						timer.cancel();
+					// TODO Auto-generated method stub
+					// 서버에서도 10초를 세야하나 고민
+					// long starttime = System.currentTimeMillis();
+					if (QuizType == 1) {
+						String q = quiz.getQuiz(QuizType, MCQ_count);
+						String view[] = quiz.getchoice(MCQ_count);
+						// List<String> view = Arrays.asList(quiz.getchoice(MCQ_count));
+						List<String> list = new ArrayList<>();
+						list.add(q);
+						for (String s : view) {
+							list.add(s);
+						}
+						obcm1.quiz.put(QuizType, list);
+						MCQ_count++;
+
+					} else if (QuizType == 2) {
+						String q = quiz.getQuiz(QuizType, OX_count);
+						OX_count++;
+						obcm1.quiz.put(QuizType, Arrays.asList(q));
+					}
+					 WriteRoomObject(obcm1);
+				}
+
+			};
+			timer.schedule(m_task, 0, 11000);
+			//
+
+		}
+		// 정답처리 - 점수
+
 	}
 
 }

@@ -19,6 +19,8 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -62,7 +64,7 @@ public class JavaGameClientView extends JFrame {
 
 	private Frame frame;
 	private FileDialog fd;
-	
+
 	private JavaGameClientRoom room;
 	public static JLabel lblCharacter = new JLabel("");
 	private String character = "src/images/Character.gif"; // 기본 캐릭터 지정
@@ -138,7 +140,7 @@ public class JavaGameClientView extends JFrame {
 		btnEntry.setBounds(534, 373, 152, 57);
 		contentPane.add(btnEntry);
 
-		AppendText(ip_addr + " " + port_no);
+		// AppendText(ip_addr + " " + port_no);
 		setVisible(true);
 
 		try {
@@ -210,14 +212,16 @@ public class JavaGameClientView extends JFrame {
 						else
 							JavaGameClientRoom.AppendText(msg);
 						break;
-						
+					case "400":
+						setVisible(true);// view 창 다시 열기
+						break;
 					case "450":
 						for (int i = 0; i < 4; i++) {
 							JavaGameClientRoom.lblUserName[i].setText("");
 							JavaGameClientRoom.lblUserName[i].setForeground(Color.WHITE);
 							JavaGameClientRoom.lblUserCharacter[i].setIcon(null);
 							JavaGameClientRoom.lblUserReady[i].setVisible(false);
-							
+
 						}
 						break;
 
@@ -233,7 +237,7 @@ public class JavaGameClientView extends JFrame {
 							if (cm.playerlist.get(name).get(1).equals("Ready")) {
 								JavaGameClientRoom.lblUserReady[idx].setVisible(true);
 							}
-							//JavaGameClientRoom.btn_Ready.setText("준비완료");
+							// JavaGameClientRoom.btn_Ready.setText("준비완료");
 							idx++;
 						}
 						break;
@@ -251,8 +255,58 @@ public class JavaGameClientView extends JFrame {
 						}
 						break;
 					case "600":
-						// 여기서
-						setVisible(true);// view 창 다시 열기
+						JavaGameClientRoom.GameStart();
+						try {
+							Thread.sleep(2000);
+							JavaGameClientRoom.lblQuestion.setFont(new Font("배달의민족 도현", Font.PLAIN, 18));
+							JavaGameClientRoom.lblQuestion.setBounds(20, 25, 700, 30);
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						break;
+					case "650":
+						for (Integer type : cm.quiz.keySet()) {
+							JavaGameClientRoom.lblQuestion.setText(cm.quiz.get(type).get(0)); // 0번째가 문제
+
+							for (int i = 0; i < 4; i++) {
+								if (type.equals(1)) { // 객관식이면 보기가 4개
+									JavaGameClientRoom.btn_quizV[i].setText(cm.quiz.get(type).get(i + 1));
+									JavaGameClientRoom.btn_quizV[i].setVisible(true);
+									if (i < 2) JavaGameClientRoom.btn_OX[i].setVisible(false);
+								} else if (type.equals(2)) { // ox퀴즈는 보기가 없으므로 o, x버튼 만들기
+									JavaGameClientRoom.btn_quizV[i].setVisible(false);
+									if(i < 2)JavaGameClientRoom.btn_OX[i].setVisible(true);
+								}
+							}
+
+						}
+
+						JavaGameClientRoom.timebar.setValue(10);
+						JavaGameClientRoom.timebar.setMaximum(10);
+						Timer timer = new Timer(true);
+						TimerTask m_task = new TimerTask() { // 타이머 표시
+							int time = 10;
+
+							@Override
+							public void run() {
+								// TODO Auto-generated method stub
+								JavaGameClientRoom.timebar.setValue(time);
+								JavaGameClientRoom.lblTime.setText(time + "");
+								try {
+									Thread.sleep(1000);
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+
+								time--;
+								if (time < 0)
+									timer.cancel();
+							}
+
+						};
+						timer.schedule(m_task, 0, 1000);
 						break;
 					}
 				} catch (IOException e) {
@@ -278,9 +332,9 @@ public class JavaGameClientView extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// 문제점 : 대기방에 여러창 띄워놓은 다음 게임방에 들어갈때 오류남
-			if(room == null)
+			if (room == null)
 				room = new JavaGameClientRoom(user_name, character);
-			else{
+			else {
 				room.setVisible(true);
 			}
 			setVisible(false);
