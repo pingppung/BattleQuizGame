@@ -266,28 +266,34 @@ public class JavaGameClientView extends JFrame {
 						}
 						break;
 					case "650":
+						String ans = "";
 						for (Integer type : cm.quiz.keySet()) {
 							JavaGameClientRoom.lblQuestion.setText(cm.quiz.get(type).get(0)); // 0번째가 문제
-
 							for (int i = 0; i < 4; i++) {
 								if (type.equals(1)) { // 객관식이면 보기가 4개
 									JavaGameClientRoom.btn_quizV[i].setText(cm.quiz.get(type).get(i + 1));
 									JavaGameClientRoom.btn_quizV[i].setVisible(true);
-									if (i < 2) JavaGameClientRoom.btn_OX[i].setVisible(false);
+									if (i < 2)
+										JavaGameClientRoom.btn_OX[i].setVisible(false);
 								} else if (type.equals(2)) { // ox퀴즈는 보기가 없으므로 o, x버튼 만들기
 									JavaGameClientRoom.btn_quizV[i].setVisible(false);
-									if(i < 2)JavaGameClientRoom.btn_OX[i].setVisible(true);
+									if (i < 2)
+										JavaGameClientRoom.btn_OX[i].setVisible(true);
 								}
 							}
-
+							if (type.equals(1)) {
+								ans = cm.quiz.get(type).get(5); //정답
+							} else {
+								ans = cm.quiz.get(type).get(1); //정답
+							}
 						}
-
+						final String ans2 = ans;
 						JavaGameClientRoom.timebar.setValue(10);
 						JavaGameClientRoom.timebar.setMaximum(10);
 						Timer timer = new Timer(true);
 						TimerTask m_task = new TimerTask() { // 타이머 표시
 							int time = 10;
-
+							
 							@Override
 							public void run() {
 								// TODO Auto-generated method stub
@@ -301,12 +307,30 @@ public class JavaGameClientView extends JFrame {
 								}
 
 								time--;
-								if (time < 0)
+								if (time < 0) {
+									if(JavaGameClientRoom.ans.equals(ans2)) {
+										JavaGameClientRoom.getPlayerSeq(user_name);
+										//JavaGameClientRoom.AppendText(Arrays.asList(JavaGameClientRoom.lblUserName).indexOf(user_name)+"");
+										//JavaGameClientRoom.AppendText(JavaGameClientRoom);
+										//JavaGameClientRoom.lblScore
+//										ChatMsg obcm1 = new ChatMsg(user_name, "700", "Score");
+//										SendObject(obcm1);
+									}
+
 									timer.cancel();
+								}
 							}
 
 						};
 						timer.schedule(m_task, 0, 1000);
+						
+						// ChatMsg obcm1 = new ChatMsg(user_name, "700", "Entry"); //선택한 답 서버에 넘겨서 계산
+						// SendObject(obcm);
+
+						break;
+					case "700":
+						int index = Integer.valueOf(cm.data);
+						JavaGameClientRoom.lblScore[index].setText(Integer.valueOf(JavaGameClientRoom.lblScore[index].getText())+1+"");
 						break;
 					}
 				} catch (IOException e) {

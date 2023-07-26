@@ -242,12 +242,12 @@ public class JavaGameServer extends JFrame {
 		// 왜? 룸채팅만 하면 socket closed가 되는지
 		// 채팅만 하고 나면 아무것도 안됨 연결이 끊김 - 렉먹은 마냥
 		//
-		public void WriteRoomObject2(Object ob) {
+		public void WriteRoomOthers(Object ob) {
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
 				// AppendText(String.valueOf(user.room_id));
 
-				if (user.room_id == roomId && user.user_status == "O") {
+				if (user != this && user.room_id == roomId && user.user_status == "O") {
 					// AppendText(user.user_name);
 					user.WriteOneObject(ob);
 
@@ -434,7 +434,7 @@ public class JavaGameServer extends JFrame {
 							}
 						}
 						// AppendText(cm.username+" "+cm.data);
-						WriteRoomObject2(cm);
+						WriteRoomObject(cm);
 
 					} else if (cm.code.matches("400")) { // exit버튼
 						// Logout();
@@ -561,8 +561,15 @@ public class JavaGameServer extends JFrame {
 
 						// 여기서 만약 4명이 전부다 ready상태이면 게임 시작하도록
 
-					} else if (cm.code.matches("600")) { // 게임 start
-
+					} else if (cm.code.matches("700")) { // 퀴즈 점수 계산
+						for (int i = 0; i < user_vc.size(); i++) {
+							UserService user = (UserService) user_vc.elementAt(i);
+							if (user.user_name.equals(cm.username) && user.user_status == "O") {
+								roomId = user.room_id; // 유저가 속한 룸id
+								break;
+							}
+						}
+						WriteRoomOthers(cm);
 					} else { // 300, 500, ... 기타 object는 모두 방송한다.
 						WriteAllObject(cm);
 					}
@@ -611,37 +618,41 @@ public class JavaGameServer extends JFrame {
 					 obcm1.quiz.clear();
 					int QuizType = (int) (Math.random() * 2 + 1); // 1 - 객관식, 2- ox
 					AppendText(QuizType+"");
-					if (MCQ_count + OX_count >= 11)
+					if (MCQ_count + OX_count >= 7)
 						timer.cancel();
 					// TODO Auto-generated method stub
 					// 서버에서도 10초를 세야하나 고민
 					// long starttime = System.currentTimeMillis();
 					if (QuizType == 1) {
-						String q = quiz.getQuiz(QuizType, MCQ_count);
-						String view[] = quiz.getchoice(MCQ_count);
+						String q = quiz.getQuiz(QuizType, MCQ_count); //문제
+						String view[] = quiz.getchoice(MCQ_count); //보기
+						int ans = Integer.valueOf(quiz.getAnsw(QuizType, MCQ_count));//정답번호
 						// List<String> view = Arrays.asList(quiz.getchoice(MCQ_count));
 						List<String> list = new ArrayList<>();
 						list.add(q);
 						for (String s : view) {
 							list.add(s);
 						}
+						list.add(view[ans-1]);
 						obcm1.quiz.put(QuizType, list);
 						MCQ_count++;
 
 					} else if (QuizType == 2) {
 						String q = quiz.getQuiz(QuizType, OX_count);
+						String ans = String.valueOf(quiz.getAnsw(QuizType, OX_count));
 						OX_count++;
-						obcm1.quiz.put(QuizType, Arrays.asList(q));
+						List<String> list = new ArrayList<>();
+						list.add(q);
+						list.add(ans);
+						obcm1.quiz.put(QuizType, list);
 					}
 					 WriteRoomObject(obcm1);
 				}
 
 			};
 			timer.schedule(m_task, 0, 11000);
-			//
 
 		}
-		// 정답처리 - 점수
 
 	}
 

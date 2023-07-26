@@ -10,7 +10,6 @@ import java.io.IOException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -60,8 +59,7 @@ public class JavaGameClientRoom extends JFrame {
 	public static JButton[] btn_quizV = new JButton[4];
 	public static JButton[] btn_OX = new JButton[2];
 
-	private JFileChooser fileComponent = new JFileChooser();
-	
+	public static String ans = "";
 	public JavaGameClientRoom(String username, String character) {
 		// TODO Auto-generated constructor stub
 		this.username = username;
@@ -93,9 +91,9 @@ public class JavaGameClientRoom extends JFrame {
 				// super.paintComponent(g);
 			}
 		};
-		
-		//fileComponent.fil
-		
+
+		// fileComponent.fil
+
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -169,7 +167,7 @@ public class JavaGameClientRoom extends JFrame {
 			contentPane.add(lblUserReady[i]);
 			contentPane.add(lblScore[i]);
 		}
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); //x버튼 눌러도 반응없게
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // x버튼 눌러도 반응없게
 		setVisible(true);
 
 	}
@@ -214,6 +212,14 @@ public class JavaGameClientRoom extends JFrame {
 				if (msg.contains("/exit")) // 종료 처리
 					System.exit(0);
 			}
+		}
+	}
+
+	// 퀴즈 정답 선택
+	class QuestionChoiceAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
 		}
 	}
 
@@ -283,51 +289,74 @@ public class JavaGameClientRoom extends JFrame {
 		lblTime.setBounds(200, 10, 50, 39);
 		contentPane.add(lblTime);
 
-
 		for (int i = 0; i < 4; i++) {
 			lblUserReady[i].setVisible(false);
 			lblScore[i].setVisible(true);
 		}
-		
+
 		// 퀴즈 패널
 		QuizPane.setBackground(Color.WHITE);
 		QuizPane.setBounds(20, 70, 740, 200);
 		QuizPane.setLayout(null);
-		//문제
+		// 문제
 		lblQuestion.setText("START");
 		lblQuestion.setFont(new Font("배달의민족 도현", Font.PLAIN, 60));
 		lblQuestion.setBounds(20, 70, 700, 70);
 		lblQuestion.setHorizontalAlignment(SwingConstants.CENTER);
 		QuizPane.add(lblQuestion);
-		
-		//객관식 버튼, ox버튼
-		for(int i = 0; i < 4; i++) {
+
+		// 객관식 버튼, ox버튼
+		for (int i = 0; i < 4; i++) {
 			btn_quizV[i] = new JButton(String.valueOf(i));
-			//btn_quizV[i].setBackground(Color.WHITE);
+			// btn_quizV[i].setBackground(Color.WHITE);
 			btn_quizV[i].setFont(new Font("나눔스퀘어", Font.PLAIN, 12));
-			if(i < 2) {
-				btn_quizV[i].setBounds(30+i*360, 70, 315, 50);
+			if (i < 2) {
+				btn_quizV[i].setBounds(30 + i * 360, 70, 315, 50);
 			} else {
-				btn_quizV[i].setBounds(30+(i-2)*360, 130, 315, 50);
+				btn_quizV[i].setBounds(30 + (i - 2) * 360, 130, 315, 50);
 			}
+			btn_quizV[i].addActionListener(new ActionListener() { //이벤트 만들어서 넣으면 오류남
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	                // TODO Auto-generated method stub
+	            	ans = e.getActionCommand();
+	            }
+	        });
 			QuizPane.add(btn_quizV[i]);
 
 			btn_quizV[i].setVisible(false);
 		}
-		for(int i = 0; i < 2; i++) {
-			if(i == 0) btn_OX[i] = new JButton("O");
-			if(i == 1) btn_OX[i] = new JButton("X");
+		for (int i = 0; i < 2; i++) {
+			if (i == 0)
+				btn_OX[i] = new JButton("O");
+			if (i == 1)
+				btn_OX[i] = new JButton("X");
 			btn_OX[i].setFont(new Font("나눔스퀘어", Font.PLAIN, 60));
-			btn_OX[i].setBounds(30+i*360, 70, 315, 100);
+			btn_OX[i].setBounds(30 + i * 360, 70, 315, 100);
 			QuizPane.add(btn_OX[i]);
+			btn_OX[i].addActionListener(new ActionListener() { //이벤트 만들어서 넣으면 오류남
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	                // TODO Auto-generated method stub
+	            	ans = e.getActionCommand();
+	            }
+	        });
 			btn_OX[i].setVisible(false);
 		}
-		
-		contentPane.add(QuizPane);
-		contentPane.add(topPane); //이걸 안하면 타이머가 topPane보다 밑에 위치하여 안보이는 것 같음
-	}
-	public void Question() {
-		
-	}
 
+		contentPane.add(QuizPane);
+		contentPane.add(topPane); // 이걸 안하면 타이머가 topPane보다 밑에 위치하여 안보이는 것 같음
+
+	}
+	public static void getPlayerSeq(String user) {
+		for(int i = 0; i< 4; i++) {
+			if(lblUserName[i].getText().equals(user)) {
+				lblScore[i].setText(Integer.valueOf(lblScore[i].getText())+1+"");
+				ChatMsg cm = new ChatMsg(username, "700", String.valueOf(i)); //스코어 새로고침
+				JavaGameClientView.SendObject(cm);
+				break;
+			}
+		}
+		
+	}
 }

@@ -49,40 +49,40 @@ public class JavaGameServerQuiz {
 		String[] ans = new String[4];
 		switch (quizNum) {
 		case 1: // chat message
-			ans[0] = "정답";
-			ans[1] = "정답";
-			ans[2] = "정답";
-			ans[3] = "정답";
+			ans[0] = "정1";
+			ans[1] = "정2";
+			ans[2] = "정3";
+			ans[3] = "정4";
 			return ans;
 		case 2:
-			ans[0] = "정답";
-			ans[1] = "정답";
-			ans[2] = "정답";
-			ans[3] = "정답";
+			ans[0] = "정1";
+			ans[1] = "정2";
+			ans[2] = "정3";
+			ans[3] = "정4";
 			return ans;
 		case 3:
-			ans[0] = "정답";
-			ans[1] = "정답";
-			ans[2] = "정답";
-			ans[3] = "정답";
+			ans[0] = "정1";
+			ans[1] = "정2";
+			ans[2] = "정3";
+			ans[3] = "정4";
 			return ans;
 		case 4:
-			ans[0] = "정답";
-			ans[1] = "정답";
-			ans[2] = "정답";
-			ans[3] = "정답";
+			ans[0] = "정1";
+			ans[1] = "정2";
+			ans[2] = "정3";
+			ans[3] = "정4";
 			return ans;
 		case 5:
-			ans[0] = "정답";
-			ans[1] = "정답";
-			ans[2] = "정답";
-			ans[3] = "정답";
+			ans[0] = "정1";
+			ans[1] = "정2";
+			ans[2] = "정3";
+			ans[3] = "정4";
 			return ans;
 		case 6:
-			ans[0] = "정답";
-			ans[1] = "정답";
-			ans[2] = "정답";
-			ans[3] = "정답";
+			ans[0] = "정1";
+			ans[1] = "정2";
+			ans[2] = "정3";
+			ans[3] = "정4";
 			return ans;
 		default:
 			break;
@@ -91,22 +91,22 @@ public class JavaGameServerQuiz {
 		return null;
 	}
 	// 정답
-		public int getAnsw(int type, int quizNum) {
+		public String getAnsw(int type, int quizNum) {
 			// 객관식일 경우
 			if (type == 1) {
 				switch (quizNum) {
 				case 1: 
-					return 1;   //그냥 답 번호로 바로 보내기
+					return "1";   //그냥 답 번호로 바로 보내기
 				case 2:
-					return 1;
+					return "1";
 				case 3:
-					return 1;
+					return "1";
 				case 4:
-					return 1;
+					return "1";
 				case 5:
-					return 1;
+					return "1";
 				case 6:
-					return 1;
+					return "1";
 				default:
 					break;
 				}
@@ -115,22 +115,22 @@ public class JavaGameServerQuiz {
 			if (type == 2) {
 				switch (quizNum) {
 				case 1:	 		// chat message
-					return 5;
+					return "O";
 				case 2:
-					return 5;
+					return "O";
 				case 3:
-					return 5;
+					return "X";
 				case 4:
-					return 5;
+					return "O";
 				case 5:
-					return 5;
+					return "O";
 				case 6:
-					return 5;
+					return "X";
 				default:
 					break;
 				}
 			}
 		
-		return 0;
+		return "";
 		}
 }
