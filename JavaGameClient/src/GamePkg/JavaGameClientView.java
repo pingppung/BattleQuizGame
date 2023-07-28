@@ -227,6 +227,7 @@ public class JavaGameClientView extends JFrame {
 
 					case "500": // 플레이어리스트
 						int idx = 0;
+						
 						for (String name : cm.playerlist.keySet()) {
 							JavaGameClientRoom.lblUserName[idx].setText(name);
 							ImageIcon character = new ImageIcon(cm.playerlist.get(name).get(0));
@@ -300,7 +301,7 @@ public class JavaGameClientView extends JFrame {
 								JavaGameClientRoom.timebar.setValue(time);
 								JavaGameClientRoom.lblTime.setText(time + "");
 								try {
-									Thread.sleep(1000);
+									Thread.sleep(100);
 								} catch (InterruptedException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
@@ -310,6 +311,7 @@ public class JavaGameClientView extends JFrame {
 								if (time < 0) {
 									if(JavaGameClientRoom.ans.equals(ans2)) {
 										JavaGameClientRoom.getPlayerSeq(user_name);
+										JavaGameClientRoom.ans = "";
 										//JavaGameClientRoom.AppendText(Arrays.asList(JavaGameClientRoom.lblUserName).indexOf(user_name)+"");
 										//JavaGameClientRoom.AppendText(JavaGameClientRoom);
 										//JavaGameClientRoom.lblScore
@@ -318,6 +320,7 @@ public class JavaGameClientView extends JFrame {
 									}
 
 									timer.cancel();
+									
 								}
 							}
 
@@ -332,6 +335,23 @@ public class JavaGameClientView extends JFrame {
 						int index = Integer.valueOf(cm.data);
 						JavaGameClientRoom.lblScore[index].setText(Integer.valueOf(JavaGameClientRoom.lblScore[index].getText())+1+"");
 						break;
+					case "750":
+						if(cm.data.equals("GameOver")) {
+							JavaGameClientRoom.GameOver();
+							JavaGameClientRoom.lblQuestion.setFont(new Font("나눔스퀘어", Font.PLAIN, 18));
+							JavaGameClientRoom.lblQuestion.setBounds(20, 25, 700, 30);
+							JavaGameClientRoom.lblQuestion.setText("게임 결과");
+							
+						} else if(cm.data.equals("Rank")){
+							JavaGameClientRoom.AppendText(cm.rank.size()+"");
+							int i = 0;
+							for(String ranks : cm.rank.keySet()) {
+								JavaGameClientRoom.AppendText(ranks+" "+ cm.rank.get(ranks));
+								JavaGameClientRoom.rank[i].setText(cm.rank.get(ranks)+ "  "+ranks); 
+								i++;
+							}
+						}
+						
 					}
 				} catch (IOException e) {
 					AppendText("ois.readObject() error");

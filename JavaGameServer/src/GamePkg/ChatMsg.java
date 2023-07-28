@@ -14,6 +14,7 @@ class ChatMsg implements Serializable {
 	public String data;
 	public Map<String, List<String>> playerlist = new LinkedHashMap<>(); //이름, 캐릭터
 	public Map<Integer, List<String>> quiz = new LinkedHashMap<>(); //타입, 문제[0]/보기
+	public Map<String, Integer> rank = new LinkedHashMap<>();
 	public ChatMsg(String username, String code, String msg) {
 		this.code = code;
 		this.username = username;

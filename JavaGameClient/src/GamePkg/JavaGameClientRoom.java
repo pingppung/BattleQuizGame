@@ -60,11 +60,14 @@ public class JavaGameClientRoom extends JFrame {
 	public static JButton[] btn_OX = new JButton[2];
 
 	public static String ans = "";
+	
+	public static JLabel[] rank = new JLabel[4];
 	public JavaGameClientRoom(String username, String character) {
 		// TODO Auto-generated constructor stub
 		this.username = username;
 		this.character = character;
 		initWindow();
+		//GameOver();
 		ReadyButtonClick action_ready = new ReadyButtonClick();
 		btn_Ready.addActionListener(action_ready);
 
@@ -154,7 +157,7 @@ public class JavaGameClientRoom extends JFrame {
 			lblUserReady[i].setBorder(new LineBorder(new Color(0, 0, 0), 0));
 			lblUserReady[i].setBounds(61 + i * 180, 485, 121, 40);
 
-			lblScore[i] = new JLabel("0000");
+			lblScore[i] = new JLabel("0");
 			lblScore[i].setVisible(false);
 			lblScore[i].setHorizontalAlignment(SwingConstants.CENTER);
 			lblScore[i].setForeground(Color.WHITE);
@@ -358,5 +361,32 @@ public class JavaGameClientRoom extends JFrame {
 			}
 		}
 		
+	}
+	public static void GameOver() {
+//		QuizPane.setBackground(Color.WHITE);
+//		QuizPane.setBounds(20, 70, 740, 200);
+//		QuizPane.setLayout(null);
+//		lblQuestion.setText("게임 결과");
+//		lblQuestion.setFont(new Font("배달의민족 도현", Font.PLAIN, 18));
+//		lblQuestion.setBounds(20, 25, 700, 30);
+//		lblQuestion.setHorizontalAlignment(SwingConstants.CENTER);
+//		QuizPane.add(lblQuestion);
+		for (int i = 0; i < 4; i++) {
+			btn_quizV[i].setVisible(false); 
+			if(i < 2)btn_OX[i].setVisible(false);
+			rank[i] = new JLabel("dsdafas");
+			rank[i].setFont(new Font("나눔스퀘어", Font.BOLD, 20));
+			rank[i].setHorizontalAlignment(SwingConstants.CENTER);
+			rank[i].setBounds(100, 60+i*30, 700, 30);
+			
+			QuizPane.add(rank[i]);
+			rank[i].setVisible(true);
+			if(lblUserName[i].getText().equals(username)) {
+				ChatMsg cm = new ChatMsg(username, "750", lblScore[i].getText()); //스코어 새로고침
+				JavaGameClientView.SendObject(cm);
+			}
+			
+		}
+		contentPane.add(QuizPane);
 	}
 }

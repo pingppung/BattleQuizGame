@@ -15,6 +15,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -555,9 +556,10 @@ public class JavaGameServer extends JFrame {
 							obcm1.code = "600";
 							obcm1.data = "GameStart"; // 게임 시작한다고 클라이언트에게 알리기 "600"
 							WriteRoomObject(obcm1);
-							RandomQuiz(obcm1); // 게임 시작하고 start표시 띄운다음 했으면 좋겠는데 일단 바로 시작
-						}
-						else WriteRoomObject(obcm1);
+							RandomQuiz(); // 게임 시작하고 start표시 띄운다음 했으면 좋겠는데 일단 바로 시작
+
+						} else
+							WriteRoomObject(obcm1);
 
 						// 여기서 만약 4명이 전부다 ready상태이면 게임 시작하도록
 
@@ -570,6 +572,40 @@ public class JavaGameServer extends JFrame {
 							}
 						}
 						WriteRoomOthers(cm);
+					} else if (cm.code.matches("750")) { // 퀴즈 점수 계산
+						for (int i = 0; i < user_vc.size(); i++) {
+							UserService user = (UserService) user_vc.elementAt(i);
+							if (user.user_name.equals(cm.username) && user.user_status == "O") {
+								roomId = user.room_id; // 유저가 속한 룸id
+								break;
+							}
+						}
+						Room getRoom = getRoomById(roomId);
+						int score = Integer.valueOf(cm.data);
+						getRoom.putRank(cm.username, score);
+						//cm.rank.put(Integer.valueOf(cm.data), cm.username);
+						cm.data = "Rank";
+						if(getRoom.getRank().size() == 4) {
+							//점수대로 정렬해서 보내야하는디..
+							List<String> list = new ArrayList<>(getRoom.getRank().keySet());
+							Collections.sort(list, (s1, s2) -> ((Integer) getRoom.getRank().get(s2)).compareTo((Integer)getRoom.getRank().get(s1)));
+							
+							int rank = 0;
+							Integer a = 0;
+							for(String key : list) {
+								if(a.equals(getRoom.getRank().get(key))) {
+									cm.rank.put(key, rank);
+									
+								}
+								else {
+									rank++;
+									cm.rank.put(key, rank);
+								}
+								a = (Integer) getRoom.getRank().get(key);
+								
+							}
+							WriteRoomObject(cm);
+						}
 					} else { // 300, 500, ... 기타 object는 모두 방송한다.
 						WriteAllObject(cm);
 					}
@@ -604,55 +640,68 @@ public class JavaGameServer extends JFrame {
 		}
 
 		// 퀴즈 랜덤
-		public void RandomQuiz(ChatMsg obcm1) {
+		public void RandomQuiz() {
 
 			JavaGameServerQuiz quiz = new JavaGameServerQuiz();
-		
+
 			Timer timer = new Timer(true);
 			TimerTask m_task = new TimerTask() {
 				int MCQ_count = 1, OX_count = 1;
+
 				@Override
 
 				public void run() {
-					ChatMsg obcm1 = new ChatMsg("SERVER", "650", "Question");
-					 obcm1.quiz.clear();
-					int QuizType = (int) (Math.random() * 2 + 1); // 1 - 객관식, 2- ox
-					AppendText(QuizType+"");
-					if (MCQ_count + OX_count >= 7)
-						timer.cancel();
-					// TODO Auto-generated method stub
-					// 서버에서도 10초를 세야하나 고민
-					// long starttime = System.currentTimeMillis();
-					if (QuizType == 1) {
-						String q = quiz.getQuiz(QuizType, MCQ_count); //문제
-						String view[] = quiz.getchoice(MCQ_count); //보기
-						int ans = Integer.valueOf(quiz.getAnsw(QuizType, MCQ_count));//정답번호
-						// List<String> view = Arrays.asList(quiz.getchoice(MCQ_count));
-						List<String> list = new ArrayList<>();
-						list.add(q);
-						for (String s : view) {
-							list.add(s);
+					ChatMsg obcm1 = null;
+					if (MCQ_count + OX_count <= 4) {
+						obcm1 = new ChatMsg("SERVER", "650", "Question");
+						obcm1.quiz.clear();
+						int QuizType = (int) (Math.random() * 2 + 1); // 1 - 객관식, 2- ox
+
+						if (QuizType == 1) {
+							String q = quiz.getQuiz(QuizType, MCQ_count); // 문제
+							String view[] = quiz.getchoice(MCQ_count); // 보기
+							int ans = Integer.valueOf(quiz.getAnsw(QuizType, MCQ_count));// 정답번호
+							// List<String> view = Arrays.asList(quiz.getchoice(MCQ_count));
+							List<String> list = new ArrayList<>();
+							list.add(q);
+							for (String s : view) {
+								list.add(s);
+							}
+							list.add(view[ans - 1]);
+							obcm1.quiz.put(QuizType, list);
+							MCQ_count++;
+
+						} else if (QuizType == 2) {
+							String q = quiz.getQuiz(QuizType, OX_count);
+							String ans = String.valueOf(quiz.getAnsw(QuizType, OX_count));
+							OX_count++;
+							List<String> list = new ArrayList<>();
+							list.add(q);
+							list.add(ans);
+							obcm1.quiz.put(QuizType, list);
 						}
-						list.add(view[ans-1]);
-						obcm1.quiz.put(QuizType, list);
-						MCQ_count++;
-
-					} else if (QuizType == 2) {
-						String q = quiz.getQuiz(QuizType, OX_count);
-						String ans = String.valueOf(quiz.getAnsw(QuizType, OX_count));
-						OX_count++;
-						List<String> list = new ArrayList<>();
-						list.add(q);
-						list.add(ans);
-						obcm1.quiz.put(QuizType, list);
 					}
-					 WriteRoomObject(obcm1);
-				}
+					else {
+						obcm1 = new ChatMsg("SERVER", "750", "GameOver");//중지
+						timer.cancel();
 
+					}
+
+					WriteRoomObject(obcm1);
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			};
-			timer.schedule(m_task, 0, 11000);
+			timer.schedule(m_task, 0, 17000);
+
+			//
 
 		}
+		// 정답처리 - 점수
 
 	}
 
