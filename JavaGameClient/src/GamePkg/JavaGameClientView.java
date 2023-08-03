@@ -61,7 +61,8 @@ public class JavaGameClientView extends JFrame {
 	private JLabel lblUserName;
 	// private JTextArea textArea;
 	private static JTextPane textArea = new JTextPane();
-
+	private static JPanel topPane = new JPanel(); 
+	
 	private Frame frame;
 	private FileDialog fd;
 
@@ -69,6 +70,11 @@ public class JavaGameClientView extends JFrame {
 	public static JLabel lblCharacter = new JLabel("");
 	private String character = "src/images/Character.gif"; // 기본 캐릭터 지정
 
+	public static JLabel[] lblCoinArr = new JLabel[2];
+	private String coin = "src/images/Coin.gif"; // 코인 이미지
+	public static JLabel lblCoin = new JLabel("10");
+	
+	private String[] addCoins = {"10", "5", "2", "0"};
 	/**
 	 * Create the frame.
 	 * 
@@ -97,6 +103,32 @@ public class JavaGameClientView extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
+		
+		topPane.setBackground(new Color(255, 182, 193));
+		topPane.setBounds(0, 0, 700, 55);
+		
+		
+//		lblCoinArr[0]= new JLabel("");
+//		lblCoinArr[0].setBackground(Color.WHITE);
+//		ImageIcon coinIcon = new ImageIcon(coin);
+//		lblCoinArr[0].setIcon(coinIcon);
+//		lblCoinArr[0].setHorizontalAlignment(SwingConstants.CENTER);
+//		lblCoinArr[0].setBounds(12, 100, 133, 42);
+//		
+//		lblCoinArr[1]= new JLabel("");
+//		lblCoinArr[1].setFont(new Font("나눔스퀘어", Font.PLAIN, 12));
+//		
+//		lblCoinArr[1].setBounds(150, 5, 133, 42);
+//		lblCoinArr[1].setText("10개");
+//		topPane.add(lblCoinArr[0]);
+//		topPane.add(lblCoinArr[1]);
+		
+		lblCoin.setFont(new Font("나눔스퀘어", Font.PLAIN, 15));
+		lblCoin.setHorizontalAlignment(SwingConstants.LEFT);
+		lblCoin.setBounds(10, 20, 100, 15);
+		contentPane.add(lblCoin);
+		contentPane.add(topPane);
+		
 		// 채팅창
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(12, 345, 375, 109);
@@ -213,6 +245,7 @@ public class JavaGameClientView extends JFrame {
 							JavaGameClientRoom.AppendText(msg);
 						break;
 					case "400":
+						lblCoin.setText(String.valueOf(cm.coin));
 						setVisible(true);// view 창 다시 열기
 						break;
 					case "450":
@@ -326,7 +359,8 @@ public class JavaGameClientView extends JFrame {
 
 						};
 						timer.schedule(m_task, 0, 1000);
-						
+//						ChatMsg obcm1 = new ChatMsg(user_name, "400", "RoomExit");
+//						SendObject(obcm);
 						// ChatMsg obcm1 = new ChatMsg(user_name, "700", "Entry"); //선택한 답 서버에 넘겨서 계산
 						// SendObject(obcm);
 
@@ -343,13 +377,35 @@ public class JavaGameClientView extends JFrame {
 							JavaGameClientRoom.lblQuestion.setText("게임 결과");
 							
 						} else if(cm.data.equals("Rank")){
-							JavaGameClientRoom.AppendText(cm.rank.size()+"");
 							int i = 0;
 							for(String ranks : cm.rank.keySet()) {
-								JavaGameClientRoom.AppendText(ranks+" "+ cm.rank.get(ranks));
-								JavaGameClientRoom.rank[i].setText(cm.rank.get(ranks)+ "  "+ranks); 
+								
+								//JavaGameClientRoom.AppendText(ranks+"등 "+ cm.rank.get(ranks).get(0) +"  +"+cm.rank.get(ranks).get(1));
+								JavaGameClientRoom.rank[i].setText(ranks+"등 "+ cm.rank.get(ranks).get(0) +"  +"+cm.rank.get(ranks).get(1));
+//								if(ranks.equals(cm.username)) {
+//									lblCoin.setText(String.valueOf(Integer.valueOf(lblCoin.getText())+cm.rank.get(ranks).get(1))); 
+//								}
 								i++;
 							}
+							try {
+								Thread.sleep(10000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							//게임 결과 뜬 후 10초 후에 로비방으로 or 게임 레디부터
+							JavaGameClientRoom.Restart();
+							
+//							Timer t = new Timer(true);
+//							TimerTask task = new TimerTask() {
+//
+//								@Override
+//								public void run() {
+//									// TODO Auto-generated method stub
+//									
+//								}
+//								
+//							};
 						}
 						
 					}

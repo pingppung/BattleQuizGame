@@ -279,6 +279,8 @@ public class JavaGameClientRoom extends JFrame {
 	}
 
 	public static void GameStart() {
+		btn_Ready.setVisible(false);
+		btn_Exit.setVisible(false);
 		// 타이머
 		timebar = new JProgressBar();
 		timebar.setForeground(new Color(153, 153, 204));
@@ -376,7 +378,7 @@ public class JavaGameClientRoom extends JFrame {
 			if(i < 2)btn_OX[i].setVisible(false);
 			rank[i] = new JLabel("dsdafas");
 			rank[i].setFont(new Font("나눔스퀘어", Font.BOLD, 20));
-			rank[i].setHorizontalAlignment(SwingConstants.CENTER);
+			rank[i].setHorizontalAlignment(SwingConstants.LEFT);
 			rank[i].setBounds(100, 60+i*30, 700, 30);
 			
 			QuizPane.add(rank[i]);
@@ -388,5 +390,18 @@ public class JavaGameClientRoom extends JFrame {
 			
 		}
 		contentPane.add(QuizPane);
+	}
+	public static void Restart() {
+	
+	//	initWindow(); 
+		QuizPane.setVisible(false);
+		btn_Ready.setText("준비완료");
+		btn_Ready.setVisible(true);
+		btn_Exit.setVisible(true);
+		for (int i = 0; i < 4; i++) {
+			rank[i].setVisible(false);
+			lblScore[i].setVisible(false);
+			lblUserReady[i].setVisible(false);
+		}
 	}
 }

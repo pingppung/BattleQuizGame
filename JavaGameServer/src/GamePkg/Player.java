@@ -8,7 +8,8 @@ public class Player{
 	private String name;
 	private String character;
 	private PlayerStatus.Status playerStatus;
-	
+	private int coin = 10; //기본 코인
+    
 	public Player(String name, String character){
 		this.name = name;
 		this.character = character;
@@ -54,7 +55,12 @@ public class Player{
     public void setRoom(Room room) {
         this.room = room;
     }
-    
+    public int getCoin() {
+        return coin;
+    }
+    public void setCoin(int coin) {
+        this.coin += coin;
+    }
     public ServerSocket getSocket() {
         return socket;
     }
