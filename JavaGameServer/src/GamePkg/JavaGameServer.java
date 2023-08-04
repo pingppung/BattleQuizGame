@@ -428,27 +428,14 @@ public class JavaGameServer extends JFrame {
 						}
 					} else if (cm.code.matches("250")) { // 게임방 message
 						// ChatMsg obcm1 = new ChatMsg(cm.username, "250", cm.data);
-						for (int i = 0; i < user_vc.size(); i++) {
-							UserService user = (UserService) user_vc.elementAt(i);
-							if (user.user_name.equals(cm.username) && user.user_status == "O") {
-								roomId = user.room_id; // 유저가 속한 룸id
-								break;
-							}
-						}
+						findRoomId(cm.username);
 						// AppendText(cm.username+" "+cm.data);
 						WriteRoomObject(cm);
 
 					} else if (cm.code.matches("400")) { // exit버튼
 						// Logout();
 						// break;
-						for (int i = 0; i < user_vc.size(); i++) {
-							UserService user = (UserService) user_vc.elementAt(i);
-							if (user.user_name.equals(cm.username) && user.user_status == "O") {
-								roomId = user.room_id; // 유저가 속한 룸id
-								user.room_id = 0; // 룸번호 초기화
-								break;
-							}
-						}
+						findRoomId(cm.username);
 						// **Room getRoom = RoomManager.getRoom(roomId - 1);
 						Room getRoom = getRoomById(roomId);
 						if (getRoom != null) {
@@ -475,7 +462,7 @@ public class JavaGameServer extends JFrame {
 						ChatMsg obcm1 = new ChatMsg(cm.username, "500", "playerlist");
 
 						// 플레이어 로그인
-						Player player = new Player(user_name, cm.character);
+						Player player = new Player(user_name, cm.character, cm.coin);
 						player.setSocket(socket);
 						player.setPlayerStatus(PlayerStatus.Status.StandBy);
 						// roomlist 마지막 방에서 플레이어 4명일 경우 새로 방 만들기

@@ -2,17 +2,18 @@ package GamePkg;
 
 import java.net.ServerSocket;
 
-public class Player{
+public class Player {
 	private ServerSocket socket;
 	private Room room;
 	private String name;
 	private String character;
 	private PlayerStatus.Status playerStatus;
 	private int coin = 10; //기본 코인
-    
-	public Player(String name, String character){
+	
+	public Player(String name, String character, Integer c){
 		this.name = name;
 		this.character = character;
+		this.coin = c;
 	}
 	
 	public void enterRoom(Room room) {
@@ -20,7 +21,7 @@ public class Player{
 		this.room = room; // 유저가 속한 방을 룸으로 변경한다. 
 	}
 	public void exitRoom(Room room){
-        this.playerStatus = PlayerStatus.Status.View;
+		this.playerStatus = PlayerStatus.Status.View;
         this.room = null;
     }
 	
@@ -49,18 +50,20 @@ public class Player{
     public void setCharacter(String character) {
         this.character = character;
     }
+    
+    public int getCoin() {
+        return coin;
+    }
+    public void setCoin(int c) {
+        this.coin += c;
+    }
     public Room getRoom() {
         return room;
     }
     public void setRoom(Room room) {
         this.room = room;
     }
-    public int getCoin() {
-        return coin;
-    }
-    public void setCoin(int coin) {
-        this.coin += coin;
-    }
+    
     public ServerSocket getSocket() {
         return socket;
     }

@@ -440,6 +440,7 @@ public class JavaGameClientView extends JFrame {
 			setVisible(false);
 			ChatMsg obcm = new ChatMsg(user_name, "500", "Entry");
 			obcm.character = character;
+			obcm.coin = Integer.valueOf(lblCoin.getText());
 			SendObject(obcm);
 
 		}
