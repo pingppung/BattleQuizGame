@@ -61,20 +61,22 @@ public class JavaGameClientView extends JFrame {
 	private JLabel lblUserName;
 	// private JTextArea textArea;
 	private static JTextPane textArea = new JTextPane();
-	private static JPanel topPane = new JPanel(); 
-	
+	private static JPanel topPane = new JPanel();
+
 	private Frame frame;
 	private FileDialog fd;
 
 	private JavaGameClientRoom room;
 	public static JLabel lblCharacter = new JLabel("");
-	private String character = "src/images/Character.gif"; // 기본 캐릭터 지정
+	private String character = "src/images/Character1.png"; // 기본 캐릭터 지정
 
 	public static JLabel[] lblCoinArr = new JLabel[2];
 	private String coin = "src/images/Coin.gif"; // 코인 이미지
 	public static JLabel lblCoin = new JLabel("10");
-	
-	private String[] addCoins = {"10", "5", "2", "0"};
+	private String[] addCoins = { "10", "5", "2", "0" };
+
+	private JButton btnShop;
+
 	/**
 	 * Create the frame.
 	 * 
@@ -103,11 +105,11 @@ public class JavaGameClientView extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		
 		topPane.setBackground(new Color(255, 182, 193));
 		topPane.setBounds(0, 0, 700, 55);
-		
-		
+		contentPane.add(topPane);
+		topPane.setLayout(null);
+
 //		lblCoinArr[0]= new JLabel("");
 //		lblCoinArr[0].setBackground(Color.WHITE);
 //		ImageIcon coinIcon = new ImageIcon(coin);
@@ -122,13 +124,18 @@ public class JavaGameClientView extends JFrame {
 //		lblCoinArr[1].setText("10개");
 //		topPane.add(lblCoinArr[0]);
 //		topPane.add(lblCoinArr[1]);
-		
+
 		lblCoin.setFont(new Font("나눔스퀘어", Font.PLAIN, 15));
 		lblCoin.setHorizontalAlignment(SwingConstants.LEFT);
 		lblCoin.setBounds(10, 20, 100, 15);
-		contentPane.add(lblCoin);
-		contentPane.add(topPane);
-		
+		topPane.add(lblCoin);
+
+		btnShop = new JButton("Shop");
+		btnShop.setFont(new Font("나눔스퀘어", Font.PLAIN, 15));
+		btnShop.setBackground(Color.WHITE);
+		btnShop.setBounds(550, 8, 105, 37);
+		topPane.add(btnShop);
+
 		// 채팅창
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(12, 345, 375, 109);
@@ -197,6 +204,9 @@ public class JavaGameClientView extends JFrame {
 			RoomEntryButtonClick action_entry = new RoomEntryButtonClick();
 			btnEntry.addActionListener(action_entry);
 
+			ShopEntryButtonClick action_shop = new ShopEntryButtonClick();
+			btnShop.addActionListener(action_shop);
+
 		} catch (NumberFormatException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -244,6 +254,14 @@ public class JavaGameClientView extends JFrame {
 						else
 							JavaGameClientRoom.AppendText(msg);
 						break;
+					case "300":// 캐릭터 구매 정보
+						for (int i = 0; i < 8; i++) {
+							if (cm.costume[i] != null && cm.costume[i] == 1) { // 보유하고 있는 캐릭터
+								JavaGameClientShop.btnSelect[i].setText("선택");
+							}
+						}
+						
+						break;
 					case "400":
 						lblCoin.setText(String.valueOf(cm.coin));
 						setVisible(true);// view 창 다시 열기
@@ -260,7 +278,7 @@ public class JavaGameClientView extends JFrame {
 
 					case "500": // 플레이어리스트
 						int idx = 0;
-						
+
 						for (String name : cm.playerlist.keySet()) {
 							JavaGameClientRoom.lblUserName[idx].setText(name);
 							ImageIcon character = new ImageIcon(cm.playerlist.get(name).get(0));
@@ -316,9 +334,9 @@ public class JavaGameClientView extends JFrame {
 								}
 							}
 							if (type.equals(1)) {
-								ans = cm.quiz.get(type).get(5); //정답
+								ans = cm.quiz.get(type).get(5); // 정답
 							} else {
-								ans = cm.quiz.get(type).get(1); //정답
+								ans = cm.quiz.get(type).get(1); // 정답
 							}
 						}
 						final String ans2 = ans;
@@ -327,7 +345,7 @@ public class JavaGameClientView extends JFrame {
 						Timer timer = new Timer(true);
 						TimerTask m_task = new TimerTask() { // 타이머 표시
 							int time = 10;
-							
+
 							@Override
 							public void run() {
 								// TODO Auto-generated method stub
@@ -342,18 +360,18 @@ public class JavaGameClientView extends JFrame {
 
 								time--;
 								if (time < 0) {
-									if(JavaGameClientRoom.ans.equals(ans2)) {
+									if (JavaGameClientRoom.ans.equals(ans2)) {
 										JavaGameClientRoom.getPlayerSeq(user_name);
 										JavaGameClientRoom.ans = "";
-										//JavaGameClientRoom.AppendText(Arrays.asList(JavaGameClientRoom.lblUserName).indexOf(user_name)+"");
-										//JavaGameClientRoom.AppendText(JavaGameClientRoom);
-										//JavaGameClientRoom.lblScore
+										// JavaGameClientRoom.AppendText(Arrays.asList(JavaGameClientRoom.lblUserName).indexOf(user_name)+"");
+										// JavaGameClientRoom.AppendText(JavaGameClientRoom);
+										// JavaGameClientRoom.lblScore
 //										ChatMsg obcm1 = new ChatMsg(user_name, "700", "Score");
 //										SendObject(obcm1);
 									}
 
 									timer.cancel();
-									
+
 								}
 							}
 
@@ -367,21 +385,24 @@ public class JavaGameClientView extends JFrame {
 						break;
 					case "700":
 						int index = Integer.valueOf(cm.data);
-						JavaGameClientRoom.lblScore[index].setText(Integer.valueOf(JavaGameClientRoom.lblScore[index].getText())+1+"");
+						JavaGameClientRoom.lblScore[index]
+								.setText(Integer.valueOf(JavaGameClientRoom.lblScore[index].getText()) + 1 + "");
 						break;
 					case "750":
-						if(cm.data.equals("GameOver")) {
+						if (cm.data.equals("GameOver")) {
 							JavaGameClientRoom.GameOver();
 							JavaGameClientRoom.lblQuestion.setFont(new Font("나눔스퀘어", Font.PLAIN, 18));
 							JavaGameClientRoom.lblQuestion.setBounds(20, 25, 700, 30);
 							JavaGameClientRoom.lblQuestion.setText("게임 결과");
-							
-						} else if(cm.data.equals("Rank")){
+
+						} else if (cm.data.equals("Rank")) {
 							int i = 0;
-							for(String ranks : cm.rank.keySet()) {
-								
-								//JavaGameClientRoom.AppendText(ranks+"등 "+ cm.rank.get(ranks).get(0) +"  +"+cm.rank.get(ranks).get(1));
-								JavaGameClientRoom.rank[i].setText(ranks+"등 "+ cm.rank.get(ranks).get(0) +"  +"+cm.rank.get(ranks).get(1));
+							for (String ranks : cm.rank.keySet()) {
+
+								// JavaGameClientRoom.AppendText(ranks+"등 "+ cm.rank.get(ranks).get(0) +"
+								// +"+cm.rank.get(ranks).get(1));
+								JavaGameClientRoom.rank[i].setText(
+										ranks + "등 " + cm.rank.get(ranks).get(0) + "  +" + cm.rank.get(ranks).get(1));
 //								if(ranks.equals(cm.username)) {
 //									lblCoin.setText(String.valueOf(Integer.valueOf(lblCoin.getText())+cm.rank.get(ranks).get(1))); 
 //								}
@@ -393,9 +414,9 @@ public class JavaGameClientView extends JFrame {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							//게임 결과 뜬 후 10초 후에 로비방으로 or 게임 레디부터
+							// 게임 결과 뜬 후 10초 후에 로비방으로 or 게임 레디부터
 							JavaGameClientRoom.Restart();
-							
+
 //							Timer t = new Timer(true);
 //							TimerTask task = new TimerTask() {
 //
@@ -407,7 +428,7 @@ public class JavaGameClientView extends JFrame {
 //								
 //							};
 						}
-						
+
 					}
 				} catch (IOException e) {
 					AppendText("ois.readObject() error");
@@ -439,10 +460,21 @@ public class JavaGameClientView extends JFrame {
 			}
 			setVisible(false);
 			ChatMsg obcm = new ChatMsg(user_name, "500", "Entry");
-			obcm.character = character;
 			obcm.coin = Integer.valueOf(lblCoin.getText());
+			obcm.character = character;
 			SendObject(obcm);
 
+		}
+	}
+
+	class ShopEntryButtonClick implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+			JavaGameClientShop shop = new JavaGameClientShop(user_name);
+			ChatMsg obcm = new ChatMsg(user_name, "300", "Shop");
+			SendObject(obcm);
+			// setVisible(false);
 		}
 	}
 

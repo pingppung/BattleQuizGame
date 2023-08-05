@@ -13,6 +13,7 @@ class ChatMsg implements Serializable {
 	public String character;
 	public int coin;
 	public String data;
+	public Integer[] costume = new Integer[8];
 	public Map<String, List<String>> playerlist = new LinkedHashMap<>();
 	public Map<Integer, List<String>> quiz = new LinkedHashMap<>(); //타입, 문제[0]/보기
 	public Map<String, List<Integer>> rank = new LinkedHashMap<>(); //이름, 등수/+코인

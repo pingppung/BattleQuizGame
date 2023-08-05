@@ -9,11 +9,13 @@ public class Player {
 	private String character;
 	private PlayerStatus.Status playerStatus;
 	private int coin = 10; //기본 코인
+	private Integer[] costume = new Integer[8];
 	
-	public Player(String name, String character, Integer c){
+	public Player(String name, String character){//, Integer c){
 		this.name = name;
 		this.character = character;
-		this.coin = c;
+		costume[0] = 1; //첫번째 캐릭터는 기본 캐릭터
+		//this.coin = c;
 	}
 	
 	public void enterRoom(Room room) {
@@ -24,13 +26,19 @@ public class Player {
 		this.playerStatus = PlayerStatus.Status.View;
         this.room = null;
     }
-	
+	public void purchaseCoustume(int idx) { //상점 들어갈시 샀던 캐릭터들 정보 0-없음 1- 있음
+		costume[idx] = 1;
+	}
+	public Integer[] getCoustume() { //상점 들어갈시 샀던 캐릭터들 정보 0-없음 1- 있음
+		return costume;
+	}
     public PlayerStatus.Status getPlayerStatus() {
         return playerStatus;
     }
 	public void setPlayerStatus(PlayerStatus.Status status) { // 유저의 상태를 설정
 		this.playerStatus = status;
 	}
+	
 	//플레이어 비교
 	public boolean equals(Object o) {
 		if(this == o) return true;
