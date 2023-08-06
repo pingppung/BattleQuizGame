@@ -22,10 +22,15 @@ public class JavaGameClientShop extends JFrame{
 	public static JLabel[] character = new JLabel[8];
 	//private String character = "src/images/Character.gif"; // 기본 캐릭터 지정
 	
+	public JButton btn_Exit = new JButton("EXIT");
+	
 	public JavaGameClientShop(String name) {
 		this.username = name;
 		
 		initWindow();
+		
+		ExitButtonClick back = new ExitButtonClick();
+		btn_Exit.addActionListener(back);
 	}
 	public void initWindow() {
 		setResizable(false);
@@ -78,6 +83,10 @@ public class JavaGameClientShop extends JFrame{
 			contentPane.add(character[i]);
 			contentPane.add(btnSelect[i]);
 		}
+		
+		
+		btn_Exit.setBounds(830, 10, 100, 30);
+		contentPane.add(btn_Exit);
 		setVisible(true);
 	}
 	
@@ -85,9 +94,29 @@ public class JavaGameClientShop extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JButton o = (JButton)e.getSource();
-		//	JavaGameClientView.AppendText(o.getName());
-			ChatMsg obcm = new ChatMsg(username, "300", o.getName());
+			//	JavaGameClientView.AppendText(o.getName());
+			ChatMsg obcm = null;
+			if(e.getActionCommand().equals("선택")) { //캐릭터 변경 - 변경할 떄는 변경할 캐릭터 경로 보내기
+				int idx = Integer.valueOf(o.getName());
+				String route = "src/images/Character"+ (idx+1) + ".png";
+				ImageIcon update_icon = new ImageIcon(route);
+				JavaGameClientView.lblCharacter.setIcon(update_icon);
+				
+				obcm = new ChatMsg(username, "300", route);
+				
+			} else if(e.getActionCommand().equals("구매")){//캐릭터 구매 - 구매할 떄는 구매할 캐릭터 번호 cm.data로 보내기
+				obcm = new ChatMsg(username, "300", o.getName());
+				
+			}
 			JavaGameClientView.SendObject(obcm);
+			
+		}
+	}
+	class ExitButtonClick implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			dispose();
 		}
 	}
 }

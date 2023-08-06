@@ -26,6 +26,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -70,8 +71,8 @@ public class JavaGameClientView extends JFrame {
 	public static JLabel lblCharacter = new JLabel("");
 	private String character = "src/images/Character1.png"; // 기본 캐릭터 지정
 
-	public static JLabel[] lblCoinArr = new JLabel[2];
-	private String coin = "src/images/Coin.gif"; // 코인 이미지
+//	public static JLabel[] lblCoinArr = new JLabel[2];
+//	private String coin = "src/images/Coin.gif"; // 코인 이미지
 	public static JLabel lblCoin = new JLabel("10");
 	private String[] addCoins = { "10", "5", "2", "0" };
 
@@ -255,10 +256,17 @@ public class JavaGameClientView extends JFrame {
 							JavaGameClientRoom.AppendText(msg);
 						break;
 					case "300":// 캐릭터 구매 정보
-						for (int i = 0; i < 8; i++) {
-							if (cm.costume[i] != null && cm.costume[i] == 1) { // 보유하고 있는 캐릭터
-								JavaGameClientShop.btnSelect[i].setText("선택");
+						if(cm.data.equals("FAIL")) { //구매 실패했을 경우 경고문
+							JOptionPane.showMessageDialog(null, "코인 부족", "구매 실패", JOptionPane.PLAIN_MESSAGE);
+							
+						}  else {
+							lblCoin.setText(String.valueOf(cm.coin));
+							for (int i = 0; i < 8; i++) {
+								if (cm.costume[i] != null && cm.costume[i] == 1) { // 보유하고 있는 캐릭터
+									JavaGameClientShop.btnSelect[i].setText("선택");
+								}
 							}
+							
 						}
 						
 						break;

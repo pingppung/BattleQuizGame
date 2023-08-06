@@ -444,24 +444,32 @@ public class JavaGameServer extends JFrame {
 								break;
 							}
 						}
-						if(isNumber(cm.data)) {
-							player.purchaseCoustume(Integer.parseInt(cm.data));
+						
+						
+						if(isNumber(cm.data)) { //번호면 구매
+							if(player.getCoin() >= 10) { //캐릭터 구매 = 코인 10개 필요
+								player.purchaseCoustume(Integer.parseInt(cm.data));
+								player.setCoin(player.getCoin() - 10);
+								cm.coin = player.getCoin();
+								cm.data = "SUCCESS";
+							} else { //코인 부족하여 구매 x
+								cm.data = "FAIL";
+							}
+							
+//							for(Integer a : cm.costume) {
+//								AppendText(a+"");
+//							}
+							
+						} else if(cm.data.equals("Shop")){//shop입장
+							AppendText(cm.username+"님 코인샵 입장");
+						} else { //캐릭터 변경
+							player.setCharacter(cm.data);
+							cm.data = "CHANGE";
 						}
 						cm.costume = player.getCoustume().clone();
-						for(Integer a : cm.costume) {
-							AppendText(a+"");
-						}
 						WriteOneObject(cm);
-						
 					} else if(cm.code.matches("350")) { //캐릭터 구매 or 변경
-//						Player player = null;
-//						for (Player p : players_list) {
-//							if (p.getName().equals(cm.username)) {
-//								player = p;
-//								break;
-//							}
-//						}
-//						player
+//					
 					} else if (cm.code.matches("400")) { // exit버튼
 						// Logout();
 						// break;
@@ -614,7 +622,7 @@ public class JavaGameServer extends JFrame {
 								for (int i = 0; i < playerlist.size(); i++) {
 									Player p = (Player) playerlist.get(i);
 									if (key.equals(p.getName())) {
-										p.setCoin(addCoins[rank - 1]);
+										p.setCoin(p.getCoin()+addCoins[rank - 1]);
 										p.setPlayerStatus(PlayerStatus.Status.StandBy);
 										break;
 									}

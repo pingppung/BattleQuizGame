@@ -8,13 +8,14 @@ public class Player {
 	private String name;
 	private String character;
 	private PlayerStatus.Status playerStatus;
-	private int coin = 10; //기본 코인
+	private int coin; //기본 코인
 	private Integer[] costume = new Integer[8];
 	
 	public Player(String name, String character){//, Integer c){
 		this.name = name;
 		this.character = character;
 		costume[0] = 1; //첫번째 캐릭터는 기본 캐릭터
+		this.coin = 10;
 		//this.coin = c;
 	}
 	
@@ -63,7 +64,7 @@ public class Player {
         return coin;
     }
     public void setCoin(int c) {
-        this.coin += c;
+        this.coin = c;
     }
     public Room getRoom() {
         return room;
