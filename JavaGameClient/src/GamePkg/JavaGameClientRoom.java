@@ -47,7 +47,7 @@ public class JavaGameClientRoom extends JFrame {
 	public static JButton btn_Ready = new JButton("준비완료");
 	public static JLabel[] lblUserReady = new JLabel[4];
 
-	private static JButton btn_Exit = new JButton("Back");
+	public static JButton btn_Exit = new JButton("Back");
 
 	public static JLabel[] lblScore = new JLabel[4]; // 각 플레이어 점수
 
@@ -170,7 +170,7 @@ public class JavaGameClientRoom extends JFrame {
 			contentPane.add(lblUserReady[i]);
 			contentPane.add(lblScore[i]);
 		}
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // x버튼 눌러도 반응없게
+	//	setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // x버튼 눌러도 반응없게
 		setVisible(true);
 
 	}
@@ -180,7 +180,7 @@ public class JavaGameClientRoom extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			ChatMsg obcm = new ChatMsg(username, "550", btn_Ready.getText()); // ready변경사항 서버에 보내기 (다른 유저들 화면에서 띄우게)
-			// AppendText(btn_Ready.getText());
+			 //AppendText(btn_Ready.getText());
 			if (btn_Ready.getText().equals("준비완료")) { // 대기 -> 레디 상태
 				btn_Ready.setText("준비취소");
 			} else { // 레디 -> 대기 상태
@@ -218,13 +218,7 @@ public class JavaGameClientRoom extends JFrame {
 		}
 	}
 
-	// 퀴즈 정답 선택
-	class QuestionChoiceAction implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
 
-		}
-	}
 
 	// 화면에 출력
 	public synchronized static void AppendText(String msg) {
@@ -288,12 +282,12 @@ public class JavaGameClientRoom extends JFrame {
 		timebar.setMaximum(10);
 		timebar.setBounds(250, 15, 309, 30);
 		contentPane.add(timebar);
-
+		timebar.setVisible(true);
 		lblTime.setFont(new Font("배달의민족 도현", Font.PLAIN, 20));
 		lblTime.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTime.setBounds(200, 10, 50, 39);
 		contentPane.add(lblTime);
-
+		lblTime.setVisible(true);
 		for (int i = 0; i < 4; i++) {
 			lblUserReady[i].setVisible(false);
 			lblScore[i].setVisible(true);
@@ -303,16 +297,19 @@ public class JavaGameClientRoom extends JFrame {
 		QuizPane.setBackground(Color.WHITE);
 		QuizPane.setBounds(20, 70, 740, 200);
 		QuizPane.setLayout(null);
+		QuizPane.setVisible(true);
 		// 문제
 		lblQuestion.setText("START");
 		lblQuestion.setFont(new Font("배달의민족 도현", Font.PLAIN, 60));
 		lblQuestion.setBounds(20, 70, 700, 70);
 		lblQuestion.setHorizontalAlignment(SwingConstants.CENTER);
+		lblQuestion.setVisible(true);
 		QuizPane.add(lblQuestion);
 
 		// 객관식 버튼, ox버튼
 		for (int i = 0; i < 4; i++) {
 			btn_quizV[i] = new JButton(String.valueOf(i));
+			//btn_quizV[i].setVisible(true);
 			// btn_quizV[i].setBackground(Color.WHITE);
 			btn_quizV[i].setFont(new Font("나눔스퀘어", Font.PLAIN, 12));
 			if (i < 2) {
@@ -328,7 +325,7 @@ public class JavaGameClientRoom extends JFrame {
 	            }
 	        });
 			QuizPane.add(btn_quizV[i]);
-
+			
 			btn_quizV[i].setVisible(false);
 		}
 		for (int i = 0; i < 2; i++) {
@@ -336,6 +333,7 @@ public class JavaGameClientRoom extends JFrame {
 				btn_OX[i] = new JButton("O");
 			if (i == 1)
 				btn_OX[i] = new JButton("X");
+			//btn_OX[i].setVisible(true);
 			btn_OX[i].setFont(new Font("나눔스퀘어", Font.PLAIN, 60));
 			btn_OX[i].setBounds(30 + i * 360, 70, 315, 100);
 			QuizPane.add(btn_OX[i]);
@@ -376,7 +374,7 @@ public class JavaGameClientRoom extends JFrame {
 		for (int i = 0; i < 4; i++) {
 			btn_quizV[i].setVisible(false); 
 			if(i < 2)btn_OX[i].setVisible(false);
-			rank[i] = new JLabel("dsdafas");
+			rank[i] = new JLabel("오류나서 결과 안나옴");
 			rank[i].setFont(new Font("나눔스퀘어", Font.BOLD, 20));
 			rank[i].setHorizontalAlignment(SwingConstants.LEFT);
 			rank[i].setBounds(100, 60+i*30, 700, 30);
@@ -398,10 +396,16 @@ public class JavaGameClientRoom extends JFrame {
 		btn_Ready.setText("준비완료");
 		btn_Ready.setVisible(true);
 		btn_Exit.setVisible(true);
+		timebar.setVisible(false);
+		lblTime.setVisible(false);
 		for (int i = 0; i < 4; i++) {
 			rank[i].setVisible(false);
+			
+			lblScore[i].setText("0");
 			lblScore[i].setVisible(false);
+			
 			lblUserReady[i].setVisible(false);
+			
 		}
 	}
 }

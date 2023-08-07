@@ -207,7 +207,6 @@ public class JavaGameClientView extends JFrame {
 
 			ShopEntryButtonClick action_shop = new ShopEntryButtonClick();
 			btnShop.addActionListener(action_shop);
-
 		} catch (NumberFormatException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -245,6 +244,9 @@ public class JavaGameClientView extends JFrame {
 							AppendTextR(msg); // 내 메세지는 우측에
 						else
 							AppendText(msg);
+						
+
+						
 						break;
 					case "250": // 게임방 chatting
 						// 여기서 javagameclientroom을 하면 렉이 먹는 것 같음
@@ -273,6 +275,11 @@ public class JavaGameClientView extends JFrame {
 					case "400":
 						lblCoin.setText(String.valueOf(cm.coin));
 						setVisible(true);// view 창 다시 열기
+						if(cm.data.equals("GameFinishExit")) {
+							//room = null;
+							JavaGameClientRoom.Restart();
+							
+						}
 						break;
 					case "450":
 						for (int i = 0; i < 4; i++) {
@@ -360,7 +367,7 @@ public class JavaGameClientView extends JFrame {
 								JavaGameClientRoom.timebar.setValue(time);
 								JavaGameClientRoom.lblTime.setText(time + "");
 								try {
-									Thread.sleep(100);
+									Thread.sleep(1000);
 								} catch (InterruptedException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
@@ -370,7 +377,7 @@ public class JavaGameClientView extends JFrame {
 								if (time < 0) {
 									if (JavaGameClientRoom.ans.equals(ans2)) {
 										JavaGameClientRoom.getPlayerSeq(user_name);
-										JavaGameClientRoom.ans = "";
+										JavaGameClientRoom.ans = "오엥";
 										// JavaGameClientRoom.AppendText(Arrays.asList(JavaGameClientRoom.lblUserName).indexOf(user_name)+"");
 										// JavaGameClientRoom.AppendText(JavaGameClientRoom);
 										// JavaGameClientRoom.lblScore
@@ -409,8 +416,9 @@ public class JavaGameClientView extends JFrame {
 
 								// JavaGameClientRoom.AppendText(ranks+"등 "+ cm.rank.get(ranks).get(0) +"
 								// +"+cm.rank.get(ranks).get(1));
+								int diff = 50-ranks.length();
 								JavaGameClientRoom.rank[i].setText(
-										ranks + "등 " + cm.rank.get(ranks).get(0) + "  +" + cm.rank.get(ranks).get(1));
+										cm.rank.get(ranks).get(0) + "등     "+ ranks + " ".repeat(diff) + "+"+cm.rank.get(ranks).get(1));
 //								if(ranks.equals(cm.username)) {
 //									lblCoin.setText(String.valueOf(Integer.valueOf(lblCoin.getText())+cm.rank.get(ranks).get(1))); 
 //								}
@@ -423,8 +431,11 @@ public class JavaGameClientView extends JFrame {
 								e.printStackTrace();
 							}
 							// 게임 결과 뜬 후 10초 후에 로비방으로 or 게임 레디부터
-							JavaGameClientRoom.Restart();
-
+							//JavaGameClientRoom.Restart();
+							ChatMsg obcm1 = new ChatMsg(user_name, "400", "GameFinishExit");
+							room.dispose();
+							SendObject(obcm1);
+							
 //							Timer t = new Timer(true);
 //							TimerTask task = new TimerTask() {
 //
@@ -515,7 +526,7 @@ public class JavaGameClientView extends JFrame {
 	public static void AppendText(String msg) {
 		// textArea.append(msg + "\n");
 		// AppendIcon(icon1);
-		msg = msg.trim(); // 앞뒤 blank와 \n을 제거한다.
+		//msg = msg.trim(); // 앞뒤 blank와 \n을 제거한다.
 		int len = textArea.getDocument().getLength();
 		// 끝으로 이동
 		// textArea.setCaretPosition(len);

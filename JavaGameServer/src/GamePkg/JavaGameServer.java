@@ -449,8 +449,9 @@ public class JavaGameServer extends JFrame {
 						if(isNumber(cm.data)) { //번호면 구매
 							if(player.getCoin() >= 10) { //캐릭터 구매 = 코인 10개 필요
 								player.purchaseCoustume(Integer.parseInt(cm.data));
+								AppendText(player.getCoin()+"");
 								player.setCoin(player.getCoin() - 10);
-								cm.coin = player.getCoin();
+								//cm.coin = player.getCoin();
 								cm.data = "SUCCESS";
 							} else { //코인 부족하여 구매 x
 								cm.data = "FAIL";
@@ -466,6 +467,7 @@ public class JavaGameServer extends JFrame {
 							player.setCharacter(cm.data);
 							cm.data = "CHANGE";
 						}
+						cm.coin = player.getCoin();
 						cm.costume = player.getCoustume().clone();
 						WriteOneObject(cm);
 					} else if(cm.code.matches("350")) { //캐릭터 구매 or 변경
@@ -473,27 +475,54 @@ public class JavaGameServer extends JFrame {
 					} else if (cm.code.matches("400")) { // exit버튼
 						// Logout();
 						// break;
-						findRoomId(cm.username);
-						Room getRoom = getRoomById(roomId);
+						int id = findRoomId(cm.username);
+						
+						Room getRoom = getRoomById(id);
 						if (getRoom != null) {
 							Player player = getRoom.getPlayerByName(cm.username);
 							cm.coin = player.getCoin();
+							AppendText(cm.coin+"");
+							
 							boolean remove = getRoom.exitPlayer(player);
-
-							WriteOneObject(cm);
-							if (!remove) { // 방 안에 사람이 아직 남아있을 경우
+							
+							WriteOneObject(cm); //view 창 다시 띄우기
+//							if(cm.data.equals("GameFinishExit")) { //게임이 끝났을때 전부 내보내기
+//								if(remove) { //본인이 나가면 방에 남는 사람이 아무도 없을 경우 방삭제?
+//									AppendText("방삭제");
+//									RoomManager.removeRoom(getRoom);
+//								}
+//							}
+							if(cm.data.equals("GameFinishExit")) { //어차피 방은 사라지기 때문에
 								ChatMsg obcm1 = new ChatMsg("SERVER", "450", "changePlayer"); // 방안에 있는 유저들 플레이어리스트 초기화
-								WriteRoomObject(obcm1);
-								ChatMsg obcm2 = new ChatMsg("SERVER", "500", "changePlayer"); // 다시 리스트
-								List playerlist = getRoom.getPlayerList();
-								for (int i = 0; i < playerlist.size(); i++) {
-									Player p = (Player) playerlist.get(i);
-									obcm2.playerlist.put(p.getName(),
-											Arrays.asList(p.getCharacter(), p.getPlayerStatus().toString()));
-								}
-								WriteRoomObject(obcm2);
-
+								WriteOneObject(obcm1);
+								continue;
 							}
+//							else { //플레이어가 직접 exit버튼 눌러서 방나가는 경우
+//								if (!remove) { // 방 안에 사람이 아직 남아있을 경우
+//									if(cm.data.equals("GameFinishExit")) {
+//										continue;
+//									} else { 
+										ChatMsg obcm1 = new ChatMsg("SERVER", "450", "changePlayer"); // 방안에 있는 유저들 플레이어리스트 초기화
+										WriteRoomObject(obcm1);
+										
+										ChatMsg obcm2 = new ChatMsg("SERVER", "500", "changePlayer"); // 다시 리스트
+										List playerlist = getRoom.getPlayerList();
+										for (int i = 0; i < playerlist.size(); i++) {
+											Player p = (Player) playerlist.get(i);
+											obcm2.playerlist.put(p.getName(),
+													Arrays.asList(p.getCharacter(), p.getPlayerStatus().toString()));
+										}
+										WriteRoomObject(obcm2);
+										
+									//}
+									
+									//setRoomId(0); //본인 room_id = 0
+								//}
+//								} else { //본인이 나가면 방에 남는 사람이 아무도 없을 경우 방삭제?
+//									RoomManager.removeRoom(getRoom);
+//								}
+
+							//}
 						}
 
 					} else if (cm.code.matches("500")) {
@@ -537,6 +566,9 @@ public class JavaGameServer extends JFrame {
 						// 본인이 속한 방의 유저리스트들을 찾아서 클라이언트에게 넘겨주기
 						Room getRoom = RoomManager.getRoom(room);
 						room_id = getRoom.getId(); // 입장하는 방의 id를 userservice에 저장
+						setRoomId(room_id);
+						
+						
 						roomId = room_id; // room에 있는 유저한테 데이터 보낼때 비교할 변수
 						List playerlist = getRoom.getPlayerList();
 
@@ -554,9 +586,9 @@ public class JavaGameServer extends JFrame {
 
 					} else if (cm.code.matches("550")) { // ready
 						// 여기서 해당 유저에 대한 상태를 레디로 바꾸고 방안에 있는 사람들한테 유저 상태 변경 전달
-						findRoomId(cm.username);
+						int id = findRoomId(cm.username);
 						ChatMsg obcm1 = new ChatMsg(cm.username, "550", "playerReadyList");
-						Room getRoom = getRoomById(roomId);
+						Room getRoom = getRoomById(id);
 						if (getRoom != null) {
 							Player player = getRoom.getPlayerByName(cm.username);
 							if (cm.data.equals("준비완료")) {
@@ -588,10 +620,13 @@ public class JavaGameServer extends JFrame {
 
 					} else if (cm.code.matches("700")) { // 퀴즈 점수 계산
 						findRoomId(cm.username);
+						AppendText(client_socket.isConnected()+"");
 						WriteRoomOthers(cm);
+						
+						
 					} else if (cm.code.matches("750")) { // 퀴즈 점수 계산
-						findRoomId(cm.username);
-						Room getRoom = getRoomById(roomId);
+						int id = findRoomId(cm.username);
+						Room getRoom = getRoomById(id);
 						int score = Integer.valueOf(cm.data);
 						getRoom.putRank(cm.username, score);
 						// cm.rank.put(Integer.valueOf(cm.data), cm.username);
@@ -713,7 +748,7 @@ public class JavaGameServer extends JFrame {
 
 					WriteRoomObject(obcm1);
 					try {
-						Thread.sleep(100);
+						Thread.sleep(10000);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -726,15 +761,23 @@ public class JavaGameServer extends JFrame {
 
 		}
 
-		// 정답처리 - 점수
-		public void findRoomId(String name) {
+		public void setRoomId(int id) {
+			for (int i = 0; i < user_vc.size(); i++) {
+				UserService user = (UserService) user_vc.elementAt(i);
+				if (user == this && user.user_status == "O")
+					user.room_id = id;
+			}
+		}
+		public int findRoomId(String name) {
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
 				if (user.user_name.equals(name) && user.user_status == "O") {
-					roomId = user.room_id; // 유저가 속한 룸id
-					break;
+					roomId = user.room_id;
+					 return  user.room_id; // 유저가 속한 룸id
 				}
 			}
+
+			return 0;
 		}
 		public boolean isNumber(String s) {
 			try {
