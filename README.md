@@ -4,6 +4,7 @@
 <h1 align="middle"></h1>
 <h3 align="middle">자바 Socket 통신을 이용한 배틀 퀴즈 게임</h3>
 <h5 align="middle">프로젝트 기간 : 2020년 10월 11일 ~ 2020년 12월 10일</h5>
+<h5 align="middle">유튜브 링크 : https://youtu.be/ra82PbbsF6w</h5>
 <br/>
 
 # 📝 프로젝트 소개
@@ -39,7 +40,7 @@ BattleQuizGame은 socket 통신을 이용한 4인용 퀴즈 게임입니다.<br/
 ## 기술 스택
 
 - Language : `Java`
-- Library & Framework : `WebSocket`
+- Library & Framework : `Socket` `Swing`
 - Tool : `Eclipse IDE`
 <br/>
 
