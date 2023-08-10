@@ -17,7 +17,7 @@ BattleQuizGame은 socket 통신을 이용한 4인용 퀴즈 게임입니다.<br/
 <br/>
 
 ## 주요 기능 & 설명
-<img src = "https://github.com/pingppung/BattleQuizGame/assets/57535999/8fc39731-63f9-4aea-89ed-3c53949a327b" />
+<img src = "https://github.com/pingppung/BattleQuizGame/assets/57535999/a7c61ce2-380a-471d-83ec-a41f18fac8f7" />
 
 - 게임방
   - 로비창에서 '방찾기' 버튼 누를 시 랜덤으로 게임방에 입장하게 된다.
@@ -35,7 +35,9 @@ BattleQuizGame은 socket 통신을 이용한 4인용 퀴즈 게임입니다.<br/
 <br/>
 
 ## 프로젝트 구조
+<img src = "https://github.com/pingppung/BattleQuizGame/assets/57535999/ef1cb8c0-7d4b-49a5-a116-b67dadcc871d">
 <br/>
+
 
 ## 기술 스택
 
