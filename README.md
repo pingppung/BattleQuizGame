@@ -5,6 +5,9 @@
 <h3 align="middle">자바 Socket 통신을 이용한 배틀 퀴즈 게임</h3>
 <h5 align="middle">프로젝트 기간 : 2020년 10월 11일 ~ 2020년 12월 10일</h5>
 <h5 align="middle">유튜브 링크 : https://youtu.be/ra82PbbsF6w</h5>
+<h6 align="middle">팀 프로젝트로 처음에 시작하였으나 혼자 리팩토링 진행한 프로젝트</h6>
+<h6 align="middle">이전 버전 : https://github.com/pingppung/BattleQuizGame/tree/previous_version</h6>
+
 <br/>
 
 # 📝 프로젝트 소개
@@ -17,7 +20,7 @@ BattleQuizGame은 socket 통신을 이용한 4인용 퀴즈 게임입니다.<br/
 <br/>
 
 ## 주요 기능 & 설명
-<img src = "https://github.com/pingppung/BattleQuizGame/assets/57535999/a7c61ce2-380a-471d-83ec-a41f18fac8f7" />
+<img src = "https://github.com/pingppung/BattleQuizGame/assets/57535999/8fc39731-63f9-4aea-89ed-3c53949a327b" />
 
 - 게임방
   - 로비창에서 '방찾기' 버튼 누를 시 랜덤으로 게임방에 입장하게 된다.
@@ -35,7 +38,7 @@ BattleQuizGame은 socket 통신을 이용한 4인용 퀴즈 게임입니다.<br/
 <br/>
 
 ## 프로젝트 구조
-<img src = "https://github.com/pingppung/BattleQuizGame/assets/57535999/ef1cb8c0-7d4b-49a5-a116-b67dadcc871d">
+<img src = "https://github.com/pingppung/BattleQuizGame/assets/57535999/a9ffc29c-0bb9-41d4-89f6-aea8b1fdc6e0">
 <br/>
 
 
@@ -46,13 +49,3 @@ BattleQuizGame은 socket 통신을 이용한 4인용 퀴즈 게임입니다.<br/
 - Tool : `Eclipse IDE`
 <br/>
 
-## 팀원
-<table>
-  <tbody>
-    <tr>
-      <td align="center"><a href=""><img src="https://avatars.githubusercontent.com/u/132906327?s=64&v=4" width="100px;" alt=""/><br /><sub><b>조민화</b></sub></a><br /></td>
-      <td align="center"><a href="https://github.com/pingppung"><img src="https://avatars.githubusercontent.com/u/57535999?s=64&v=4" width="100px;" alt=""/><br /><sub><b>최규리</b></sub></a><br /></td>
-  </tbody>
-</table>
-
-<br>
