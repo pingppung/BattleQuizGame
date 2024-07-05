@@ -1,4 +1,4 @@
-package GamePkg;
+package gamepkg;
 
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -33,9 +33,6 @@ import javax.swing.border.EmptyBorder;
 
 public class JavaGameServer extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	JTextArea textArea;
@@ -102,7 +99,6 @@ public class JavaGameServer extends JFrame {
 				try {
 					socket = new ServerSocket(Integer.parseInt(txtPortNumber.getText()));
 				} catch (NumberFormatException | IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				AppendText("Chat Server Running..");
@@ -171,7 +167,6 @@ public class JavaGameServer extends JFrame {
 		public String user_status;
 
 		public UserService(Socket client_socket) {
-			// TODO Auto-generated constructor stub
 			// 매개변수로 넘어온 자료 저장
 			this.client_socket = client_socket;
 			this.user_vc = UserVec;
@@ -280,7 +275,6 @@ public class JavaGameServer extends JFrame {
 			try {
 				bb = msg.getBytes("euc-kr");
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			for (i = 0; i < bb.length; i++)
@@ -303,7 +297,6 @@ public class JavaGameServer extends JFrame {
 					ois = null;
 					oos = null;
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				Logout(); // 에러가난 현재 객체를 벡터에서 지운다
@@ -324,7 +317,6 @@ public class JavaGameServer extends JFrame {
 					ois = null;
 					oos = null;
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				Logout(); // 에러가난 현재 객체를 벡터에서 지운다
@@ -344,7 +336,6 @@ public class JavaGameServer extends JFrame {
 					ois = null;
 					oos = null;
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 				Logout();
@@ -362,7 +353,6 @@ public class JavaGameServer extends JFrame {
 					try {
 						obcm = ois.readObject();
 					} catch (ClassNotFoundException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 						return;
 					}
@@ -436,7 +426,7 @@ public class JavaGameServer extends JFrame {
 						// AppendText(cm.username+" "+cm.data);
 						WriteRoomObject(cm);
 
-					} else if(cm.code.matches("300")) {//캐릭터 shop 입장 - 구매했던 캐릭터들 넘기기
+					} else if (cm.code.matches("300")) {// 캐릭터 shop 입장 - 구매했던 캐릭터들 넘기기
 						Player player = null;
 						for (Player p : players_list) {
 							if (p.getName().equals(cm.username)) {
@@ -444,85 +434,84 @@ public class JavaGameServer extends JFrame {
 								break;
 							}
 						}
-						
-						
-						if(isNumber(cm.data)) { //번호면 구매
-							if(player.getCoin() >= 10) { //캐릭터 구매 = 코인 10개 필요
+
+						if (isNumber(cm.data)) { // 번호면 구매
+							if (player.getCoin() >= 10) { // 캐릭터 구매 = 코인 10개 필요
 								player.purchaseCoustume(Integer.parseInt(cm.data));
-								AppendText(player.getCoin()+"");
+								AppendText(player.getCoin() + "");
 								player.setCoin(player.getCoin() - 10);
-								//cm.coin = player.getCoin();
+								// cm.coin = player.getCoin();
 								cm.data = "SUCCESS";
-							} else { //코인 부족하여 구매 x
+							} else { // 코인 부족하여 구매 x
 								cm.data = "FAIL";
 							}
-							
-//							for(Integer a : cm.costume) {
-//								AppendText(a+"");
-//							}
-							
-						} else if(cm.data.equals("Shop")){//shop입장
-							AppendText(cm.username+"님 코인샵 입장");
-						} else { //캐릭터 변경
+
+							// for(Integer a : cm.costume) {
+							// AppendText(a+"");
+							// }
+
+						} else if (cm.data.equals("Shop")) {// shop입장
+							AppendText(cm.username + "님 코인샵 입장");
+						} else { // 캐릭터 변경
 							player.setCharacter(cm.data);
 							cm.data = "CHANGE";
 						}
 						cm.coin = player.getCoin();
 						cm.costume = player.getCoustume().clone();
 						WriteOneObject(cm);
-					} else if(cm.code.matches("350")) { //캐릭터 구매 or 변경
-//					
+					} else if (cm.code.matches("350")) { // 캐릭터 구매 or 변경
+						//
 					} else if (cm.code.matches("400")) { // exit버튼
 						// Logout();
 						// break;
 						int id = findRoomId(cm.username);
-						
+
 						Room getRoom = getRoomById(id);
 						if (getRoom != null) {
 							Player player = getRoom.getPlayerByName(cm.username);
 							cm.coin = player.getCoin();
-							AppendText(cm.coin+"");
-							
+							AppendText(cm.coin + "");
+
 							boolean remove = getRoom.exitPlayer(player);
-							
-							WriteOneObject(cm); //view 창 다시 띄우기
-//							if(cm.data.equals("GameFinishExit")) { //게임이 끝났을때 전부 내보내기
-//								if(remove) { //본인이 나가면 방에 남는 사람이 아무도 없을 경우 방삭제?
-//									AppendText("방삭제");
-//									RoomManager.removeRoom(getRoom);
-//								}
-//							}
-							if(cm.data.equals("GameFinishExit")) { //어차피 방은 사라지기 때문에
+
+							WriteOneObject(cm); // view 창 다시 띄우기
+							// if(cm.data.equals("GameFinishExit")) { //게임이 끝났을때 전부 내보내기
+							// if(remove) { //본인이 나가면 방에 남는 사람이 아무도 없을 경우 방삭제?
+							// AppendText("방삭제");
+							// RoomManager.removeRoom(getRoom);
+							// }
+							// }
+							if (cm.data.equals("GameFinishExit")) { // 어차피 방은 사라지기 때문에
 								ChatMsg obcm1 = new ChatMsg("SERVER", "450", "changePlayer"); // 방안에 있는 유저들 플레이어리스트 초기화
 								WriteOneObject(obcm1);
 								continue;
 							}
-//							else { //플레이어가 직접 exit버튼 눌러서 방나가는 경우
-//								if (!remove) { // 방 안에 사람이 아직 남아있을 경우
-//									if(cm.data.equals("GameFinishExit")) {
-//										continue;
-//									} else { 
-										ChatMsg obcm1 = new ChatMsg("SERVER", "450", "changePlayer"); // 방안에 있는 유저들 플레이어리스트 초기화
-										WriteRoomObject(obcm1);
-										
-										ChatMsg obcm2 = new ChatMsg("SERVER", "500", "changePlayer"); // 다시 리스트
-										List playerlist = getRoom.getPlayerList();
-										for (int i = 0; i < playerlist.size(); i++) {
-											Player p = (Player) playerlist.get(i);
-											obcm2.playerlist.put(p.getName(),
-													Arrays.asList(p.getCharacter(), p.getPlayerStatus().toString()));
-										}
-										WriteRoomObject(obcm2);
-										
-									//}
-									
-									//setRoomId(0); //본인 room_id = 0
-								//}
-//								} else { //본인이 나가면 방에 남는 사람이 아무도 없을 경우 방삭제?
-//									RoomManager.removeRoom(getRoom);
-//								}
+							// else { //플레이어가 직접 exit버튼 눌러서 방나가는 경우
+							// if (!remove) { // 방 안에 사람이 아직 남아있을 경우
+							// if(cm.data.equals("GameFinishExit")) {
+							// continue;
+							// } else {
+							ChatMsg obcm1 = new ChatMsg("SERVER", "450", "changePlayer"); // 방안에 있는 유저들 플레이어리스트 초기화
+							WriteRoomObject(obcm1);
 
-							//}
+							ChatMsg obcm2 = new ChatMsg("SERVER", "500", "changePlayer"); // 다시 리스트
+							List playerlist = getRoom.getPlayerList();
+							for (int i = 0; i < playerlist.size(); i++) {
+								Player p = (Player) playerlist.get(i);
+								obcm2.playerlist.put(p.getName(),
+										Arrays.asList(p.getCharacter(), p.getPlayerStatus().toString()));
+							}
+							WriteRoomObject(obcm2);
+
+							// }
+
+							// setRoomId(0); //본인 room_id = 0
+							// }
+							// } else { //본인이 나가면 방에 남는 사람이 아무도 없을 경우 방삭제?
+							// RoomManager.removeRoom(getRoom);
+							// }
+
+							// }
 						}
 
 					} else if (cm.code.matches("500")) {
@@ -567,8 +556,7 @@ public class JavaGameServer extends JFrame {
 						Room getRoom = RoomManager.getRoom(room);
 						room_id = getRoom.getId(); // 입장하는 방의 id를 userservice에 저장
 						setRoomId(room_id);
-						
-						
+
 						roomId = room_id; // room에 있는 유저한테 데이터 보낼때 비교할 변수
 						List playerlist = getRoom.getPlayerList();
 
@@ -620,10 +608,9 @@ public class JavaGameServer extends JFrame {
 
 					} else if (cm.code.matches("700")) { // 퀴즈 점수 계산
 						findRoomId(cm.username);
-						AppendText(client_socket.isConnected()+"");
+						AppendText(client_socket.isConnected() + "");
 						WriteRoomOthers(cm);
-						
-						
+
 					} else if (cm.code.matches("750")) { // 퀴즈 점수 계산
 						int id = findRoomId(cm.username);
 						Room getRoom = getRoomById(id);
@@ -657,7 +644,7 @@ public class JavaGameServer extends JFrame {
 								for (int i = 0; i < playerlist.size(); i++) {
 									Player p = (Player) playerlist.get(i);
 									if (key.equals(p.getName())) {
-										p.setCoin(p.getCoin()+addCoins[rank - 1]);
+										p.setCoin(p.getCoin() + addCoins[rank - 1]);
 										p.setPlayerStatus(PlayerStatus.Status.StandBy);
 										break;
 									}
@@ -672,8 +659,8 @@ public class JavaGameServer extends JFrame {
 				} catch (IOException e) {
 					AppendText("ois.readObject() error");
 					try {
-//						dos.close();
-//						dis.close();
+						// dos.close();
+						// dis.close();
 						ois.close();
 						oos.close();
 						client_socket.close();
@@ -750,7 +737,6 @@ public class JavaGameServer extends JFrame {
 					try {
 						Thread.sleep(10000);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -768,23 +754,24 @@ public class JavaGameServer extends JFrame {
 					user.room_id = id;
 			}
 		}
+
 		public int findRoomId(String name) {
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
 				if (user.user_name.equals(name) && user.user_status == "O") {
 					roomId = user.room_id;
-					 return  user.room_id; // 유저가 속한 룸id
+					return user.room_id; // 유저가 속한 룸id
 				}
 			}
 
 			return 0;
 		}
+
 		public boolean isNumber(String s) {
 			try {
 				Integer.parseInt(s);
 				return true;
-			}
-			catch(Exception e) {
+			} catch (Exception e) {
 				return false;
 			}
 		}

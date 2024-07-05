@@ -1,7 +1,8 @@
+content_assist_number_of_computers=20
 content_assist_proposals_background=255,255,255
 content_assist_proposals_foreground=0,0,0
 eclipse.preferences.version=1
-org.eclipse.jdt.ui.formatterprofiles.version=20
+org.eclipse.jdt.ui.formatterprofiles.version=23
 spelling_ignore_ampersand_in_properties=true
 spelling_ignore_digits=true
 spelling_ignore_java_strings=true
@@ -13,5 +14,6 @@ spelling_ignore_upper=true
 spelling_ignore_urls=true
 spelling_locale_initialized=true
 spelling_user_dictionary_encoding=UTF-8
+typefilter_migrated_2=true
 useAnnotationsPrefPage=true
 useQuickDiffPrefPage=true
