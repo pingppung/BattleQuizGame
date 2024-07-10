@@ -17,8 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -30,7 +28,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-
+import javax.swing.Timer;
 public class JavaGameServer extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -375,7 +373,7 @@ public class JavaGameServer extends JFrame {
 
 						Player player = new Player(user_name, cm.character);
 						players_list.add(player);
-
+						WriteOneObject(cm);
 					} else if (cm.code.matches("200")) {
 
 						msg = String.format("[%s] %s", cm.username, cm.data);
@@ -438,7 +436,6 @@ public class JavaGameServer extends JFrame {
 						if (isNumber(cm.data)) { // 번호면 구매
 							if (player.getCoin() >= 10) { // 캐릭터 구매 = 코인 10개 필요
 								player.purchaseCoustume(Integer.parseInt(cm.data));
-								AppendText(player.getCoin() + "");
 								player.setCoin(player.getCoin() - 10);
 								// cm.coin = player.getCoin();
 								cm.data = "SUCCESS";
@@ -470,27 +467,20 @@ public class JavaGameServer extends JFrame {
 						if (getRoom != null) {
 							Player player = getRoom.getPlayerByName(cm.username);
 							cm.coin = player.getCoin();
-							AppendText(cm.coin + "");
 
 							boolean remove = getRoom.exitPlayer(player);
 
-							WriteOneObject(cm); // view 창 다시 띄우기
-							// if(cm.data.equals("GameFinishExit")) { //게임이 끝났을때 전부 내보내기
-							// if(remove) { //본인이 나가면 방에 남는 사람이 아무도 없을 경우 방삭제?
-							// AppendText("방삭제");
-							// RoomManager.removeRoom(getRoom);
-							// }
-							// }
+							WriteOneObject(cm); 
+
+							if(getRoom.getPlayerList() == null) {
+								RoomManager.removeRoom(getRoom);
+								continue;
+							}
 							if (cm.data.equals("GameFinishExit")) { // 어차피 방은 사라지기 때문에
 								ChatMsg obcm1 = new ChatMsg("SERVER", "450", "changePlayer"); // 방안에 있는 유저들 플레이어리스트 초기화
 								WriteOneObject(obcm1);
 								continue;
 							}
-							// else { //플레이어가 직접 exit버튼 눌러서 방나가는 경우
-							// if (!remove) { // 방 안에 사람이 아직 남아있을 경우
-							// if(cm.data.equals("GameFinishExit")) {
-							// continue;
-							// } else {
 							ChatMsg obcm1 = new ChatMsg("SERVER", "450", "changePlayer"); // 방안에 있는 유저들 플레이어리스트 초기화
 							WriteRoomObject(obcm1);
 
@@ -503,20 +493,10 @@ public class JavaGameServer extends JFrame {
 							}
 							WriteRoomObject(obcm2);
 
-							// }
-
-							// setRoomId(0); //본인 room_id = 0
-							// }
-							// } else { //본인이 나가면 방에 남는 사람이 아무도 없을 경우 방삭제?
-							// RoomManager.removeRoom(getRoom);
-							// }
-
-							// }
 						}
 
 					} else if (cm.code.matches("500")) {
 						ChatMsg obcm1 = new ChatMsg(cm.username, "500", "playerlist");
-
 						// 플레이어 로그인
 
 						Player player = null;
@@ -564,11 +544,11 @@ public class JavaGameServer extends JFrame {
 						for (int i = 0; i < playerlist.size(); i++) {
 							Player p = (Player) playerlist.get(i);
 							// 왜 순서가 바뀔까.. hashset ->linkedHashset으로 변경해서 해결
-
+							//AppendText(p.getCharacter());
 							obcm1.playerlist.put(p.getName(),
 									Arrays.asList(p.getCharacter(), p.getPlayerStatus().toString()));
 						}
-						AppendText(getRoom.getId() + "" + player.getName());
+						//AppendText(getRoom.getId() + "" + player.getName());
 						Login();
 						WriteRoomObject(obcm1); // 방안에 있는 사람들한테만 전달 - user roomid를 어떻게 넣어줄건지 생각해보기
 
@@ -622,6 +602,7 @@ public class JavaGameServer extends JFrame {
 						if (getRoom.getRank().size() == 4) {
 							// 점수대로 플레이어 등수 정렬
 							List<String> list = new ArrayList<>(getRoom.getRank().keySet());
+							list.forEach((i) -> AppendText(i));
 							// Collections.sort(list, (s1, s2) -> ((Integer)
 							// getRoom.getRank().get(s2)).compareTo((Integer)getRoom.getRank().get(s1)));
 							Collections.sort(list, (s1, s2) -> ((Integer) getRoom.getRank().get(s2))
@@ -686,65 +667,53 @@ public class JavaGameServer extends JFrame {
 			return room;
 		}
 
-		// 퀴즈 랜덤
 		public void RandomQuiz() {
+		    JavaGameServerQuiz quiz = new JavaGameServerQuiz();
+		    
+		    Timer timer = new Timer(1000, new ActionListener() {
+		        int MCQ_count = 1;
+		        int OX_count = 1;
 
-			JavaGameServerQuiz quiz = new JavaGameServerQuiz();
+		        @Override
+		        public void actionPerformed(ActionEvent e) {
+		            ChatMsg obcm1 = null;
+		            if (MCQ_count + OX_count <= 4) {
+		                obcm1 = new ChatMsg("SERVER", "650", "Question");
+		                obcm1.quiz.clear();
+		                int QuizType = (int) (Math.random() * 2 + 1); // 1 - 객관식, 2 - OX
 
-			Timer timer = new Timer(true);
-			TimerTask m_task = new TimerTask() {
-				int MCQ_count = 1, OX_count = 1;
+		                if (QuizType == 1) {
+		                    String q = quiz.getQuiz(QuizType, MCQ_count); // 문제
+		                    String[] view = quiz.getchoice(MCQ_count); // 보기
+		                    int ans = Integer.valueOf(quiz.getAnsw(QuizType, MCQ_count)); // 정답번호
+		                    List<String> list = new ArrayList<>();
+		                    list.add(q);
+		                    for (String s : view) {
+		                        list.add(s);
+		                    }
+		                    list.add(view[ans - 1]);
+		                    obcm1.quiz.put(QuizType, list);
+		                    MCQ_count++;
 
-				@Override
+		                } else if (QuizType == 2) {
+		                    String q = quiz.getQuiz(QuizType, OX_count);
+		                    String ans = String.valueOf(quiz.getAnsw(QuizType, OX_count));
+		                    OX_count++;
+		                    List<String> list = new ArrayList<>();
+		                    list.add(q);
+		                    list.add(ans);
+		                    obcm1.quiz.put(QuizType, list);
+		                }
+		            } else {
+		                obcm1 = new ChatMsg("SERVER", "750", "GameOver"); // 중지
+		                //timer.stop();
+		            }
 
-				public void run() {
-					ChatMsg obcm1 = null;
-					if (MCQ_count + OX_count <= 4) {
-						obcm1 = new ChatMsg("SERVER", "650", "Question");
-						obcm1.quiz.clear();
-						int QuizType = (int) (Math.random() * 2 + 1); // 1 - 객관식, 2- ox
+		            WriteRoomObject(obcm1);
+		        }
+		    });
 
-						if (QuizType == 1) {
-							String q = quiz.getQuiz(QuizType, MCQ_count); // 문제
-							String view[] = quiz.getchoice(MCQ_count); // 보기
-							int ans = Integer.valueOf(quiz.getAnsw(QuizType, MCQ_count));// 정답번호
-							// List<String> view = Arrays.asList(quiz.getchoice(MCQ_count));
-							List<String> list = new ArrayList<>();
-							list.add(q);
-							for (String s : view) {
-								list.add(s);
-							}
-							list.add(view[ans - 1]);
-							obcm1.quiz.put(QuizType, list);
-							MCQ_count++;
-
-						} else if (QuizType == 2) {
-							String q = quiz.getQuiz(QuizType, OX_count);
-							String ans = String.valueOf(quiz.getAnsw(QuizType, OX_count));
-							OX_count++;
-							List<String> list = new ArrayList<>();
-							list.add(q);
-							list.add(ans);
-							obcm1.quiz.put(QuizType, list);
-						}
-					} else {
-						obcm1 = new ChatMsg("SERVER", "750", "GameOver");// 중지
-						timer.cancel();
-
-					}
-
-					WriteRoomObject(obcm1);
-					try {
-						Thread.sleep(10000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			};
-			timer.schedule(m_task, 0, 17000);
-
-			//
-
+		    timer.start();
 		}
 
 		public void setRoomId(int id) {

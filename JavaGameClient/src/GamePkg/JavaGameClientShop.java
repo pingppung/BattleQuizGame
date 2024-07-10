@@ -1,9 +1,6 @@
 package gamepkg;
 
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -12,21 +9,22 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
 public class JavaGameClientShop extends JFrame {
+
+	public static JButton[] btnSelect = new JButton[8];
+	
 	private String username;
 	private JPanel contentPane;
 
-	public static JButton[] btnSelect = new JButton[8];
-	public static JLabel[] character = new JLabel[8];
-	// private String character = "src/images/Character.gif"; // 기본 캐릭터 지정
+	public JLabel[] character = new JLabel[8];
 
 	public JButton btn_Exit = new JButton("EXIT");
+	private NetworkListener networkListener;
 
-	public JavaGameClientShop(String name) {
+	public JavaGameClientShop(String name, NetworkListener networkListener) {
 		this.username = name;
-
+		this.networkListener = networkListener;
 		initWindow();
 
 		ExitButtonClick back = new ExitButtonClick();
@@ -38,31 +36,18 @@ public class JavaGameClientShop extends JFrame {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 960, 540);
 
-		ImageIcon face = new ImageIcon("src/images/MainBG.png");
-		contentPane = new JPanel() {
-			public void paintComponent(Graphics g) {
-				Dimension d = getSize();
-				g.drawImage(face.getImage(), 0, 0, d.width, d.height, this);
-
-				setOpaque(false); // 그림을 표시하게 설정,투명하게 조절
-				super.paintComponent(g);
-			}
-		};
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane = ComponentFactory.createImagePanel("src/images/MainBG.png");
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
 		for (int i = 0; i < 8; i++) {
-			btnSelect[i] = new JButton("구매");
-			character[i] = new JLabel("");
-			character[i].setForeground(Color.blue);
+			character[i] = ComponentFactory.createLabel("", 0, 0, 100, 100);
+			String iconPath = "src/images/Character" + (i + 1) + ".png";
+			ImageIcon icon = new ImageIcon(iconPath);
+			character[i].setIcon(icon);
 
-			btnSelect[i].setFont(new Font("나눔스퀘어", Font.PLAIN, 12));
-
-			String icon = "src/images/Character" + (i + 1) + ".png";
-			ImageIcon image_icon = new ImageIcon(icon);
-
-			character[i].setIcon(image_icon);
+			btnSelect[i] = ComponentFactory.createTextButton("구매", 0, 0, 100, 25);
+			btnSelect[i].setName(String.valueOf(i));
 
 			if (i < 4) {// 위 4개 아래 4개
 				character[i].setBounds(100 + i * 220, 100, 100, 100);
@@ -71,13 +56,7 @@ public class JavaGameClientShop extends JFrame {
 				character[i].setBounds(100 + (i - 4) * 220, 280, 100, 100);
 				btnSelect[i].setBounds(100 + (i - 4) * 220, 390, 100, 25);
 			}
-			// btnSelect[i].putClientProperty("id", (i+1));
-			// Object property = btnSelect[i].getClientProperty("id");
-			btnSelect[i].setName(String.valueOf(i));
-
-			SelectButtonClick action_select = new SelectButtonClick();
-			btnSelect[i].addActionListener(action_select);
-
+			btnSelect[i].addActionListener(new SelectButtonClick());
 			contentPane.add(character[i]);
 			contentPane.add(btnSelect[i]);
 		}
@@ -91,7 +70,6 @@ public class JavaGameClientShop extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			JButton o = (JButton) e.getSource();
-			// JavaGameClientView.AppendText(o.getName());
 			ChatMsg obcm = null;
 			if (e.getActionCommand().equals("선택")) { // 캐릭터 변경 - 변경할 떄는 변경할 캐릭터 경로 보내기
 				int idx = Integer.valueOf(o.getName());
@@ -105,7 +83,7 @@ public class JavaGameClientShop extends JFrame {
 				obcm = new ChatMsg(username, "300", o.getName());
 
 			}
-			JavaGameClientView.SendObject(obcm);
+			networkListener.SendObject(obcm);
 
 		}
 	}
@@ -113,7 +91,6 @@ public class JavaGameClientShop extends JFrame {
 	class ExitButtonClick implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-
 			dispose();
 		}
 	}

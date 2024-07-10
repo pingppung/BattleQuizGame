@@ -48,12 +48,14 @@ public class Room {
 	}
 
 	public void close() {
-		for (int i = 0; i < playerList.size(); i++) {
-			Player player = (Player) playerList.get(i);
-			player.exitRoom(this);
+		if (playerList != null) { // playerList가 null인지 확인
+			for (int i = 0; i < playerList.size(); i++) {
+				Player player = (Player) playerList.get(i); // Player 객체 가져오기
+				player.exitRoom(this);
+			}
+			playerList.clear(); // 리스트 비우기
+			playerList = null; // playerList를 null로 설정
 		}
-		this.playerList.clear();
-		this.playerList = null;
 	}
 
 	public int getPlayerSize() { // 유저의 수를 리턴
