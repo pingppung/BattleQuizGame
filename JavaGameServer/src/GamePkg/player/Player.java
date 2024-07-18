@@ -1,6 +1,8 @@
-package gamepkg;
+package gamepkg.player;
 
 import java.net.ServerSocket;
+
+import gamepkg.room.Room;
 
 public class Player {
 	private ServerSocket socket;
@@ -25,7 +27,7 @@ public class Player {
 	}
 
 	public void exitRoom(Room room) {
-		this.playerStatus = PlayerStatus.Status.View;
+		this.playerStatus = PlayerStatus.Status.Robby;
 		this.room = null;
 	}
 

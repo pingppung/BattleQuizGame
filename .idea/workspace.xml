@@ -2,64 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4cdbd061-f9fc-4091-a97d-17ccfe242448" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.metadata/.log" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata/.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.resources/.projects/.org.eclipse.egit.core.cmp/.markers.snap" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.resources/.projects/.org.eclipse.egit.core.cmp/.syncinfo.snap" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.resources/.projects/JavaGameClient/.indexes/e4/66/history.index" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.resources/.projects/JavaGameClient/.indexes/e4/66/history.index" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.resources/.projects/JavaGameClient/.markers.snap" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.resources/.projects/JavaGameClient/.syncinfo.snap" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.resources/.projects/JavaGameServer/.indexes/e4/66/history.index" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.resources/.projects/JavaGameServer/.indexes/e4/66/history.index" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.resources/.projects/JavaGameServer/.markers.snap" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.resources/.projects/JavaGameServer/.syncinfo.snap" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.resources/.root/.indexes/properties.index" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.resources/.root/.indexes/properties.index" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.resources/.root/.markers.snap" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.resources/.safetable/org.eclipse.core.resources" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.resources/.safetable/org.eclipse.core.resources" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.resources/0.snap" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.debug.ui.prefs" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.debug.ui.prefs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.launching.prefs" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.launching.prefs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.ui.prefs" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.ui.prefs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.mylyn.tasks.ui.prefs" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.mylyn.tasks.ui.prefs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.ui.workbench.prefs" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.ui.workbench.prefs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.wst.jsdt.ui.prefs" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.wst.jsdt.ui.prefs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.e4.workbench/workbench.xmi" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.e4.workbench/workbench.xmi" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.jdt.core/1331962649.index" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.jdt.core/1331962649.index" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.jdt.core/1865797976.index" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.jdt.core/1865797976.index" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.jdt.core/3528323770.index" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.jdt.core/3528323770.index" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.jdt.core/savedIndexNames.txt" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.jdt.core/savedIndexNames.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/.plugins/org.eclipse.jdt.ui/jdt-images/0.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.metadata/version.ini" beforeDir="false" afterPath="$PROJECT_DIR$/.metadata/version.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/.project" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/.project" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientMain$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientMain$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientMain$2.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientMain$3.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientMain$Myaction.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientMain.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientRoom$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientRoom$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientRoom$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientRoom$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientRoom$3.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientRoom$ReadyButtonClick.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientRoom$ReadyButtonClick.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientRoom$RoomExitButtonClick.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientRoom$RoomExitButtonClick.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientRoom$TextSendAction.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientRoom$TextSendAction.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientRoom.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientRoom.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientShop$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientShop$ExitButtonClick.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientShop$ExitButtonClick.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientShop$SelectButtonClick.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientShop$SelectButtonClick.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientShop.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientShop.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientView$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientView$ListenNetwork$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientView$ListenNetwork.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientView$RoomEntryButtonClick.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientView$RoomEntryButtonClick.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientView$ShopEntryButtonClick.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientView$ShopEntryButtonClick.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientView$TextSendAction.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientView$TextSendAction.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientView.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/bin/gamepkg/JavaGameClientView.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/src/GamePkg/JavaGameClientMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/src/GamePkg/JavaGameClientMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/src/GamePkg/JavaGameClientRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/src/GamePkg/JavaGameClientRoom.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/src/GamePkg/JavaGameClientShop.java" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/src/GamePkg/JavaGameClientShop.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameClient/src/GamePkg/JavaGameClientView.java" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/src/GamePkg/JavaGameClientView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameServer/.project" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameServer/.project" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameServer/bin/gamepkg/JavaGameServer$AcceptServer.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameServer/bin/gamepkg/JavaGameServer$AcceptServer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameServer/bin/gamepkg/JavaGameServer$UserService.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameServer/bin/gamepkg/JavaGameServer$UserService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JavaGameServer/bin/gamepkg/JavaGameServer.class" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameServer/bin/gamepkg/JavaGameServer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JavaGameClient/.classpath" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameClient/.classpath" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JavaGameClient/src/GamePkg/ChatMsg.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/JavaGameClient/src/GamePkg/ComponentFactory.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/JavaGameClient/src/GamePkg/GameHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/JavaGameClient/src/GamePkg/JavaGameClientMain.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/JavaGameClient/src/GamePkg/JavaGameClientRoom.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/JavaGameClient/src/GamePkg/JavaGameClientShop.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/JavaGameClient/src/GamePkg/JavaGameClientView.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/JavaGameClient/src/GamePkg/NetworkListener.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/JavaGameClient/src/GamePkg/TextHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/JavaGameServer/src/GamePkg/ChatMsg.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/JavaGameServer/src/GamePkg/JavaGameServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/JavaGameServer/src/GamePkg/JavaGameServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JavaGameServer/src/GamePkg/Player.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/JavaGameServer/src/GamePkg/PlayerStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/JavaGameServer/src/GamePkg/Room.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/JavaGameServer/src/GamePkg/RoomManager.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,12 +34,12 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

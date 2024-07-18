@@ -28,7 +28,15 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+
+import gamepkg.player.Player;
+import gamepkg.player.PlayerStatus;
+import gamepkg.room.Room;
+import gamepkg.room.RoomManager;
+import gamepkg.util.ChatMsg;
+
 import javax.swing.Timer;
+
 public class JavaGameServer extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -162,7 +170,7 @@ public class JavaGameServer extends JFrame {
 		private Vector user_vc;
 		public String user_name = "";
 		public int room_id;
-		public String user_status;
+		// public Status user_status;
 
 		public UserService(Socket client_socket) {
 			// 매개변수로 넘어온 자료 저장
@@ -200,8 +208,7 @@ public class JavaGameServer extends JFrame {
 		public void WriteAll(String str) {
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
-				if (user.user_status == "O")
-					user.WriteOne(str);
+				user.WriteOne(str);
 			}
 		}
 
@@ -209,8 +216,7 @@ public class JavaGameServer extends JFrame {
 		public void WriteAllObject(Object ob) {
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
-				if (user.user_status == "O")
-					user.WriteOneObject(ob);
+				user.WriteOneObject(ob);
 			}
 		}
 
@@ -218,8 +224,18 @@ public class JavaGameServer extends JFrame {
 		public void WriteOthers(String str) {
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
-				if (user != this && user.user_status == "O")
+				if (user != this)
 					user.WriteOne(str);
+			}
+		}
+
+		// 로비의 모든 User들에게 Object를 방송. 채팅 message와 image object를 보낼 수 있다
+		public void WriteRobbyObject(Object ob) {
+			for (int i = 0; i < user_vc.size(); i++) {
+				UserService user = (UserService) user_vc.elementAt(i);
+				if (user.room_id == 0) { // 방에 입장해있지 않은 상태일 경우
+					user.WriteOneObject(ob);
+				}
 			}
 		}
 
@@ -227,28 +243,19 @@ public class JavaGameServer extends JFrame {
 		public void WriteRoom(String str) {
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
-				// AppendText(String.valueOf(user.room_id));
-				if (user.room_id == roomId && user.user_status == "O") {
+				if (user.room_id == roomId) {
 					user.WriteOne(str);
 				}
 			}
 		}
 
 		// 같은 룸에 있는 User들에게 방송(본인 제외). 채팅 message와 player object를 보낼 수 있다
-		// 왜? 룸채팅만 하면 socket closed가 되는지
-		// 채팅만 하고 나면 아무것도 안됨 연결이 끊김 - 렉먹은 마냥
-		//
 		public void WriteRoomOthers(Object ob) {
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
-				// AppendText(String.valueOf(user.room_id));
-
-				if (user != this && user.room_id == roomId && user.user_status == "O") {
-					// AppendText(user.user_name);
+				if (user != this && user.room_id == roomId) {
 					user.WriteOneObject(ob);
-
-				} // Room getRoom = RoomManager.getRoom(roomId - 1);
-					// AppendText(user.client_socket.isClosed()+"");
+				}
 			}
 
 		}
@@ -256,8 +263,7 @@ public class JavaGameServer extends JFrame {
 		public void WriteRoomObject(Object ob) {
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
-				// AppendText(String.valueOf(user.room_id));
-				if (user.room_id == roomId && user.user_status == "O") {
+				if (user.room_id == roomId) {
 					user.WriteOneObject(ob);
 				}
 			}
@@ -363,14 +369,7 @@ public class JavaGameServer extends JFrame {
 						continue;
 					if (cm.code.matches("100")) {
 						user_name = cm.username;
-						user_status = "O"; // Online 상태
 						int port = 0;
-						for (int i = 0; i < user_vc.size(); i++) {
-							UserService user = (UserService) user_vc.elementAt(i);
-							if (user == this && user.user_status == "O")
-								port = user.client_socket.getPort();
-						}
-
 						Player player = new Player(user_name, cm.character);
 						players_list.add(player);
 						WriteOneObject(cm);
@@ -379,9 +378,7 @@ public class JavaGameServer extends JFrame {
 						msg = String.format("[%s] %s", cm.username, cm.data);
 						AppendText(msg); // server 화면에 출력
 						String[] args = msg.split(" "); // 단어들을 분리한다.
-						if (args.length == 1) { // Enter key 만 들어온 경우 Wakeup 처리만 한다.
-							user_status = "O";
-						} else if (args[1].matches("/exit")) {
+						if (args[1].matches("/exit")) {
 							Logout();
 							break;
 						} else if (args[1].matches("/list")) {
@@ -390,17 +387,13 @@ public class JavaGameServer extends JFrame {
 							WriteOne("-----------------------------\n");
 							for (int i = 0; i < user_vc.size(); i++) {
 								UserService user = (UserService) user_vc.elementAt(i);
-								WriteOne(user.user_name + "\t" + user.user_status + "\n");
+								WriteOne(user.user_name + "\n");
 							}
 							WriteOne("-----------------------------\n");
-						} else if (args[1].matches("/sleep")) {
-							user_status = "S";
-						} else if (args[1].matches("/wakeup")) {
-							user_status = "O";
 						} else if (args[1].matches("/to")) { // 귓속말
 							for (int i = 0; i < user_vc.size(); i++) {
 								UserService user = (UserService) user_vc.elementAt(i);
-								if (user.user_name.matches(args[2]) && user.user_status.matches("O")) {
+								if (user.user_name.matches(args[2])) {
 									String msg2 = "";
 									for (int j = 3; j < args.length; j++) {// 실제 message 부분
 										msg2 += args[j];
@@ -414,16 +407,15 @@ public class JavaGameServer extends JFrame {
 								}
 							}
 						} else { // 일반 채팅 메시지
-							user_status = "O";
 							// WriteAll(msg + "\n"); // Write All
-							WriteAllObject(cm);
+							// WriteAllObject(cm);
+							WriteRobbyObject(cm);
 						}
 					} else if (cm.code.matches("250")) { // 게임방 message
 						// ChatMsg obcm1 = new ChatMsg(cm.username, "250", cm.data);
 						findRoomId(cm.username);
 						// AppendText(cm.username+" "+cm.data);
 						WriteRoomObject(cm);
-
 					} else if (cm.code.matches("300")) {// 캐릭터 shop 입장 - 구매했던 캐릭터들 넘기기
 						Player player = null;
 						for (Player p : players_list) {
@@ -437,15 +429,10 @@ public class JavaGameServer extends JFrame {
 							if (player.getCoin() >= 10) { // 캐릭터 구매 = 코인 10개 필요
 								player.purchaseCoustume(Integer.parseInt(cm.data));
 								player.setCoin(player.getCoin() - 10);
-								// cm.coin = player.getCoin();
 								cm.data = "SUCCESS";
 							} else { // 코인 부족하여 구매 x
 								cm.data = "FAIL";
 							}
-
-							// for(Integer a : cm.costume) {
-							// AppendText(a+"");
-							// }
 
 						} else if (cm.data.equals("Shop")) {// shop입장
 							AppendText(cm.username + "님 코인샵 입장");
@@ -459,45 +446,36 @@ public class JavaGameServer extends JFrame {
 					} else if (cm.code.matches("350")) { // 캐릭터 구매 or 변경
 						//
 					} else if (cm.code.matches("400")) { // exit버튼
-						// Logout();
-						// break;
 						int id = findRoomId(cm.username);
 
 						Room getRoom = getRoomById(id);
 						if (getRoom != null) {
 							Player player = getRoom.getPlayerByName(cm.username);
 							cm.coin = player.getCoin();
-
 							boolean remove = getRoom.exitPlayer(player);
+							WriteOneObject(cm);
 
-							WriteOneObject(cm); 
-
-							if(getRoom.getPlayerList() == null) {
+							if (cm.data.equals("GameFinishExit") && getRoom.getPlayerList() == null) {
 								RoomManager.removeRoom(getRoom);
-								continue;
-							}
-							if (cm.data.equals("GameFinishExit")) { // 어차피 방은 사라지기 때문에
-								ChatMsg obcm1 = new ChatMsg("SERVER", "450", "changePlayer"); // 방안에 있는 유저들 플레이어리스트 초기화
-								WriteOneObject(obcm1);
 								continue;
 							}
 							ChatMsg obcm1 = new ChatMsg("SERVER", "450", "changePlayer"); // 방안에 있는 유저들 플레이어리스트 초기화
 							WriteRoomObject(obcm1);
 
-							ChatMsg obcm2 = new ChatMsg("SERVER", "500", "changePlayer"); // 다시 리스트
+							ChatMsg obcm2 = new ChatMsg("SERVER", "500", "changePlayer"); // 다시 플레이어리스트 전달
 							List playerlist = getRoom.getPlayerList();
 							for (int i = 0; i < playerlist.size(); i++) {
 								Player p = (Player) playerlist.get(i);
 								obcm2.playerlist.put(p.getName(),
 										Arrays.asList(p.getCharacter(), p.getPlayerStatus().toString()));
 							}
+							setRoomId(0); // 어느 방에도 속해있지 않음을 0으로 표시
 							WriteRoomObject(obcm2);
 
 						}
 
-					} else if (cm.code.matches("500")) {
+					} else if (cm.code.matches("500")) { // 게임방 입장
 						ChatMsg obcm1 = new ChatMsg(cm.username, "500", "playerlist");
-						// 플레이어 로그인
 
 						Player player = null;
 						for (Player p : players_list) {
@@ -524,7 +502,6 @@ public class JavaGameServer extends JFrame {
 								} else {
 									newRoom = true;
 								}
-								// AppendText(String.valueOf("입장후 : "+room.getPlayerSize()));
 							}
 							if (newRoom) { // 룸에 빈자리가 없어 새로운 방을 만들어야하는 경우
 								room = RoomManager.createRoom(player);
@@ -540,15 +517,12 @@ public class JavaGameServer extends JFrame {
 						roomId = room_id; // room에 있는 유저한테 데이터 보낼때 비교할 변수
 						List playerlist = getRoom.getPlayerList();
 
-						// AppendText(room.getPlayerSize()+"");
 						for (int i = 0; i < playerlist.size(); i++) {
 							Player p = (Player) playerlist.get(i);
-							// 왜 순서가 바뀔까.. hashset ->linkedHashset으로 변경해서 해결
-							//AppendText(p.getCharacter());
+							// 순서 바뀌는 문제 hashset ->linkedHashset으로 변경해서 해결
 							obcm1.playerlist.put(p.getName(),
 									Arrays.asList(p.getCharacter(), p.getPlayerStatus().toString()));
 						}
-						//AppendText(getRoom.getId() + "" + player.getName());
 						Login();
 						WriteRoomObject(obcm1); // 방안에 있는 사람들한테만 전달 - user roomid를 어떻게 넣어줄건지 생각해보기
 
@@ -583,8 +557,6 @@ public class JavaGameServer extends JFrame {
 
 						} else
 							WriteRoomObject(obcm1);
-
-						// 여기서 만약 4명이 전부다 ready상태이면 게임 시작하도록
 
 					} else if (cm.code.matches("700")) { // 퀴즈 점수 계산
 						findRoomId(cm.username);
@@ -634,14 +606,12 @@ public class JavaGameServer extends JFrame {
 
 							WriteRoomObject(cm);
 						}
-					} else { // 300, 500, ... 기타 object는 모두 방송한다.
+					} else { // 기타 object는 모두 방송한다.
 						WriteAllObject(cm);
 					}
 				} catch (IOException e) {
 					AppendText("ois.readObject() error");
 					try {
-						// dos.close();
-						// dis.close();
 						ois.close();
 						oos.close();
 						client_socket.close();
@@ -649,9 +619,9 @@ public class JavaGameServer extends JFrame {
 						break;
 					} catch (Exception ee) {
 						break;
-					} // catch문 끝
-				} // 바깥 catch문끝
-			} // while
+					}
+				}
+			}
 		}
 
 		public Room getRoomById(int id) {
@@ -668,58 +638,58 @@ public class JavaGameServer extends JFrame {
 		}
 
 		public void RandomQuiz() {
-		    JavaGameServerQuiz quiz = new JavaGameServerQuiz();
-		    
-		    Timer timer = new Timer(1000, new ActionListener() {
-		        int MCQ_count = 1;
-		        int OX_count = 1;
+			JavaGameServerQuiz quiz = new JavaGameServerQuiz();
 
-		        @Override
-		        public void actionPerformed(ActionEvent e) {
-		            ChatMsg obcm1 = null;
-		            if (MCQ_count + OX_count <= 4) {
-		                obcm1 = new ChatMsg("SERVER", "650", "Question");
-		                obcm1.quiz.clear();
-		                int QuizType = (int) (Math.random() * 2 + 1); // 1 - 객관식, 2 - OX
+			Timer timer = new Timer(1000, new ActionListener() {
+				int MCQ_count = 1;
+				int OX_count = 1;
 
-		                if (QuizType == 1) {
-		                    String q = quiz.getQuiz(QuizType, MCQ_count); // 문제
-		                    String[] view = quiz.getchoice(MCQ_count); // 보기
-		                    int ans = Integer.valueOf(quiz.getAnsw(QuizType, MCQ_count)); // 정답번호
-		                    List<String> list = new ArrayList<>();
-		                    list.add(q);
-		                    for (String s : view) {
-		                        list.add(s);
-		                    }
-		                    list.add(view[ans - 1]);
-		                    obcm1.quiz.put(QuizType, list);
-		                    MCQ_count++;
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					ChatMsg obcm1 = null;
+					if (MCQ_count + OX_count <= 4) {
+						obcm1 = new ChatMsg("SERVER", "650", "Question");
+						obcm1.quiz.clear();
+						int QuizType = (int) (Math.random() * 2 + 1); // 1 - 객관식, 2 - OX
 
-		                } else if (QuizType == 2) {
-		                    String q = quiz.getQuiz(QuizType, OX_count);
-		                    String ans = String.valueOf(quiz.getAnsw(QuizType, OX_count));
-		                    OX_count++;
-		                    List<String> list = new ArrayList<>();
-		                    list.add(q);
-		                    list.add(ans);
-		                    obcm1.quiz.put(QuizType, list);
-		                }
-		            } else {
-		                obcm1 = new ChatMsg("SERVER", "750", "GameOver"); // 중지
-		                //timer.stop();
-		            }
+						if (QuizType == 1) {
+							String q = quiz.getQuiz(QuizType, MCQ_count); // 문제
+							String[] view = quiz.getchoice(MCQ_count); // 보기
+							int ans = Integer.valueOf(quiz.getAnsw(QuizType, MCQ_count)); // 정답번호
+							List<String> list = new ArrayList<>();
+							list.add(q);
+							for (String s : view) {
+								list.add(s);
+							}
+							list.add(view[ans - 1]);
+							obcm1.quiz.put(QuizType, list);
+							MCQ_count++;
 
-		            WriteRoomObject(obcm1);
-		        }
-		    });
+						} else if (QuizType == 2) {
+							String q = quiz.getQuiz(QuizType, OX_count);
+							String ans = String.valueOf(quiz.getAnsw(QuizType, OX_count));
+							OX_count++;
+							List<String> list = new ArrayList<>();
+							list.add(q);
+							list.add(ans);
+							obcm1.quiz.put(QuizType, list);
+						}
+					} else {
+						obcm1 = new ChatMsg("SERVER", "750", "GameOver"); // 중지
+						// timer.stop();
+					}
 
-		    timer.start();
+					WriteRoomObject(obcm1);
+				}
+			});
+
+			timer.start();
 		}
 
 		public void setRoomId(int id) {
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
-				if (user == this && user.user_status == "O")
+				if (user == this)
 					user.room_id = id;
 			}
 		}
@@ -727,7 +697,7 @@ public class JavaGameServer extends JFrame {
 		public int findRoomId(String name) {
 			for (int i = 0; i < user_vc.size(); i++) {
 				UserService user = (UserService) user_vc.elementAt(i);
-				if (user.user_name.equals(name) && user.user_status == "O") {
+				if (user.user_name.equals(name)) {
 					roomId = user.room_id;
 					return user.room_id; // 유저가 속한 룸id
 				}

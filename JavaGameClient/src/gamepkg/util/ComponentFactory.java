@@ -1,4 +1,4 @@
-package gamepkg;
+package gamepkg.util;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,7 +11,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
@@ -65,7 +64,7 @@ public class ComponentFactory {
 
     public static JLabel createLabel(String text, int x, int y, int w, int h) {
         JLabel label = new JLabel(text);
-        //label.setFont(new Font("배달의민족 도현", Font.PLAIN, 15));
+        // label.setFont(new Font("배달의민족 도현", Font.PLAIN, 15));
         label.setBackground(Color.WHITE);
         label.setForeground(Color.BLACK);
         label.setHorizontalAlignment(SwingConstants.CENTER);

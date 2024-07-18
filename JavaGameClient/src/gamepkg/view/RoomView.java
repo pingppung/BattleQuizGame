@@ -1,43 +1,37 @@
-package gamepkg;
+package gamepkg.view;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 
-public class JavaGameClientRoom extends JFrame {
+import gamepkg.GameManager;
+import gamepkg.network.ClientSocketHandler;
+import gamepkg.state.ClientState;
+import gamepkg.util.ChatMsg;
+import gamepkg.util.ComponentFactory;
+
+public class RoomView extends JFrame {
 	private static String username;
 	public static String character;
 
 	public static String ans = "";
 
 	public static JLabel lblQuestion = new JLabel();
-	
+
 	public JPanel contentPane;
 	public JPanel topPane;
 
-	private JScrollPane chatPane;
+	public JScrollPane chatPane;
 	private JTextField txtInput; // 채팅 입력
 	private JButton btn_Send;
 
@@ -59,16 +53,18 @@ public class JavaGameClientRoom extends JFrame {
 
 	public JLabel[] rank = new JLabel[4];
 
-	private NetworkListener networkListener;
-	public TextHandler roomTextHandler;
+	private ClientSocketHandler socketHandler;
 
-	public JavaGameClientRoom(String username, String character, NetworkListener networkListener) {
+	public RoomView(String username, String character, ClientSocketHandler socketHandler) {
 		this.username = username;
 		this.character = character;
-		this.networkListener = networkListener;
+		this.socketHandler = socketHandler;
+
 		initWindow();
-		roomTextHandler = new TextHandler((JTextPane) chatPane.getViewport().getView());
 		// GameOver();
+
+		socketHandler.setGameRoom(this);
+		socketHandler.stateManager.setState(ClientState.GAME_ROOM);
 		ReadyButtonClick action_ready = new ReadyButtonClick();
 		btn_Ready.addActionListener(action_ready);
 
@@ -78,7 +74,7 @@ public class JavaGameClientRoom extends JFrame {
 		TextSendAction action = new TextSendAction();
 		btn_Send.addActionListener(action);
 		txtInput.addActionListener(action);
-		
+
 		txtInput.requestFocus();
 	}
 
@@ -102,18 +98,18 @@ public class JavaGameClientRoom extends JFrame {
 		chatPane = ComponentFactory.createScrollPanel(770, 70, 295, 380);
 		contentPane.add(chatPane);
 
-		 // 입력 필드
+		// 입력 필드
 		txtInput = ComponentFactory.createTextField("나눔스퀘어", 770, 475, 215, 40, "");
 		contentPane.add(txtInput);
 
 		// 전송 버튼
-		btn_Send = ComponentFactory.createTextButton("전송", 990, 475, 75, 40); 
+		btn_Send = ComponentFactory.createTextButton("전송", 990, 475, 75, 40);
 		contentPane.add(btn_Send);
 
 		// 준비 버튼
 		btn_Ready = ComponentFactory.createTextButton("준비완료", 670, 15, 100, 30);
 		topPane.add(btn_Ready);
-		
+
 		// 나가기 버튼
 		btn_Exit = ComponentFactory.createTextButton("나가기", 965, 12, 100, 35);
 		topPane.add(btn_Exit);
@@ -145,14 +141,14 @@ public class JavaGameClientRoom extends JFrame {
 			lblUserReady[i].setForeground(Color.WHITE);
 			contentPane.add(lblScore[i]); // 배경 패널에 점수 라벨 추가
 		}
-		//setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // x버튼 눌러도 반응없게
+		// setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // x버튼 눌러도 반응없게
 		setVisible(true);
 
 	}
-	
+
 	public void GameStart() {
-		GameHandler gh = new GameHandler(this);
-		gh.GameStart();
+		GameManager gameManager = new GameManager(this);
+		gameManager.GameStart();
 	}
 
 	public void getPlayerSeq(String user) {
@@ -160,7 +156,7 @@ public class JavaGameClientRoom extends JFrame {
 			if (lblUserName[i].getText().equals(user)) {
 				lblScore[i].setText(Integer.valueOf(lblScore[i].getText()) + 1 + "");
 				ChatMsg cm = new ChatMsg(username, "700", String.valueOf(i)); // 스코어 새로고침
-				networkListener.SendObject(cm);
+				socketHandler.SendObject(cm);
 				break;
 			}
 		}
@@ -181,7 +177,7 @@ public class JavaGameClientRoom extends JFrame {
 			rank[i].setVisible(true);
 			if (lblUserName[i].getText().equals(username)) {
 				ChatMsg cm = new ChatMsg(username, "750", lblScore[i].getText()); // 스코어 새로고침
-				networkListener.SendObject(cm);
+				socketHandler.SendObject(cm);
 			}
 
 		}
@@ -217,7 +213,7 @@ public class JavaGameClientRoom extends JFrame {
 			} else { // 레디 -> 대기 상태
 				btn_Ready.setText("준비완료");
 			}
-			networkListener.SendObject(obcm);
+			socketHandler.SendObject(obcm);
 		}
 	}
 
@@ -226,7 +222,9 @@ public class JavaGameClientRoom extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			ChatMsg cm = new ChatMsg(username, "400", "RoomExit");
-			networkListener.SendObject(cm);
+			socketHandler.SendObject(cm);
+			// 게임방에서 나가니깐 로비로 설정해주기
+			socketHandler.stateManager.setState(ClientState.LOBBY);
 			dispose();
 		}
 	}
@@ -239,7 +237,7 @@ public class JavaGameClientRoom extends JFrame {
 			if (e.getSource() == btn_Send || e.getSource() == txtInput) {
 				String msg = null;
 				msg = txtInput.getText();
-				networkListener.SendMessage(username, "250", msg);
+				socketHandler.SendMessage(username, "250", msg);
 				txtInput.setText(""); // 메세지를 보내고 나면 메세지 쓰는창을 비운다.
 				txtInput.requestFocus(); // 메세지를 보내고 커서를 다시 텍스트 필드로 위치시킨다
 				if (msg.contains("/exit")) // 종료 처리

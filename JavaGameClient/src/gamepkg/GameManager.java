@@ -1,14 +1,18 @@
 package gamepkg;
 
 import javax.swing.*;
+
+import gamepkg.util.ComponentFactory;
+import gamepkg.view.RoomView;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class GameHandler {
-    private JavaGameClientRoom gameRoom;
+public class GameManager {
+    private RoomView gameRoom;
 
-    public GameHandler(JavaGameClientRoom gameRoom) {
+    public GameManager(RoomView gameRoom) {
         this.gameRoom = gameRoom;
     }
 
@@ -26,8 +30,6 @@ public class GameHandler {
         gameRoom.timebar.setVisible(true);
 
         gameRoom.lblTime = ComponentFactory.createLabel("10", 200, 10, 50, 39);
-        // gameRoom.lblTime.setFont(new Font("배달의민족 도현", Font.PLAIN, 20));
-        // gameRoom.lblTime.setHorizontalAlignment(SwingConstants.CENTER);
         gameRoom.topPane.add(gameRoom.lblTime);
         gameRoom.lblTime.setVisible(true);
     }
@@ -91,7 +93,7 @@ public class GameHandler {
     private class QuizButtonActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            JavaGameClientRoom.ans = e.getActionCommand();
+            RoomView.ans = e.getActionCommand();
         }
     }
 }

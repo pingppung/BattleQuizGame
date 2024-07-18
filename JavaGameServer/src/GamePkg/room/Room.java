@@ -1,9 +1,11 @@
-package gamepkg;
+package gamepkg.room;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import gamepkg.player.Player;
 
 public class Room {
 	private int id; // 룸 ID

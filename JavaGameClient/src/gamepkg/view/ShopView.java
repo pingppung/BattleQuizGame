@@ -1,6 +1,5 @@
-package gamepkg;
+package gamepkg.view;
 
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -10,19 +9,23 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class JavaGameClientShop extends JFrame {
+import gamepkg.network.ClientSocketHandler;
+import gamepkg.util.ChatMsg;
+import gamepkg.util.ComponentFactory;
+
+public class ShopView extends JFrame {
 
 	public static JButton[] btnSelect = new JButton[8];
-	
+
 	private String username;
 	private JPanel contentPane;
 
 	public JLabel[] character = new JLabel[8];
 
 	public JButton btn_Exit = new JButton("EXIT");
-	private NetworkListener networkListener;
+	private ClientSocketHandler networkListener;
 
-	public JavaGameClientShop(String name, NetworkListener networkListener) {
+	public ShopView(String name, ClientSocketHandler networkListener) {
 		this.username = name;
 		this.networkListener = networkListener;
 		initWindow();
@@ -75,7 +78,7 @@ public class JavaGameClientShop extends JFrame {
 				int idx = Integer.valueOf(o.getName());
 				String route = "src/images/Character" + (idx + 1) + ".png";
 				ImageIcon update_icon = new ImageIcon(route);
-				JavaGameClientView.lblCharacter.setIcon(update_icon);
+				MainView.lblCharacter.setIcon(update_icon);
 
 				obcm = new ChatMsg(username, "300", route);
 

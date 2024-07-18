@@ -1,7 +1,9 @@
-package gamepkg;
+package gamepkg.room;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import gamepkg.player.Player;
 
 public class RoomManager {
     private static List roomList = new ArrayList();

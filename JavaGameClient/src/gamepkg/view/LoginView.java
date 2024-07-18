@@ -1,17 +1,20 @@
-package gamepkg;
+package gamepkg.view;
 
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+
+import gamepkg.util.ComponentFactory;
+
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 // JavaObjClient.java
 // ObjecStream 사용하는 채팅 Client
-public class JavaGameClientMain extends JFrame {
+public class LoginView extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -23,7 +26,7 @@ public class JavaGameClientMain extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					JavaGameClientMain frame = new JavaGameClientMain();
+					LoginView frame = new LoginView();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -32,7 +35,7 @@ public class JavaGameClientMain extends JFrame {
 		});
 	}
 
-	public JavaGameClientMain() {
+	public LoginView() {
 		initialize();
 	}
 
@@ -77,7 +80,7 @@ public class JavaGameClientMain extends JFrame {
 			String username = txtUserName.getText().trim();
 			String ip_addr = txtIpAddress.getText().trim();
 			String port_no = txtPortNumber.getText().trim();
-			JavaGameClientView view = new JavaGameClientView(username, ip_addr, port_no);
+			MainView view = new MainView(username, ip_addr, port_no);
 			setVisible(false);
 		}
 	}

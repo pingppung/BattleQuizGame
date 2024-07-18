@@ -1,4 +1,4 @@
-package gamepkg;
+package gamepkg.util;
 
 import java.awt.Color;
 import javax.swing.ImageIcon;
@@ -11,21 +11,24 @@ import javax.swing.text.StyledDocument;
 //채팅
 //GUI 업데이트 
 public class TextHandler {
-	private JTextPane textArea;
+	private JTextPane textPane;
 
 	public TextHandler(JTextPane textArea) {
-		this.textArea = textArea;
+		this.textPane = textArea;
 	}
 
-
+	public void setTextPane(JTextPane textPane) {
+        this.textPane = textPane;
+    }
+	
 	public void appendIcon(ImageIcon icon) {
-		int len = textArea.getDocument().getLength();
-		textArea.setCaretPosition(len);
-		textArea.insertIcon(icon);
+		int len = textPane.getDocument().getLength();
+		textPane.setCaretPosition(len);
+		textPane.insertIcon(icon);
 	}
 
 	public void appendText(String msg) {
-		StyledDocument doc = textArea.getStyledDocument();
+		StyledDocument doc = textPane.getStyledDocument();
 		SimpleAttributeSet left = new SimpleAttributeSet();
 		StyleConstants.setAlignment(left, StyleConstants.ALIGN_LEFT);
 		StyleConstants.setForeground(left, Color.BLACK);
@@ -39,7 +42,7 @@ public class TextHandler {
 
 	public void appendTextR(String msg) {
 		msg = msg.trim();
-		StyledDocument doc = textArea.getStyledDocument();
+		StyledDocument doc = textPane.getStyledDocument();
 		SimpleAttributeSet right = new SimpleAttributeSet();
 		StyleConstants.setAlignment(right, StyleConstants.ALIGN_RIGHT);
 		StyleConstants.setForeground(right, Color.BLUE);

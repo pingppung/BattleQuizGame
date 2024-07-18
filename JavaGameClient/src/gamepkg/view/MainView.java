@@ -1,4 +1,4 @@
-package gamepkg;
+package gamepkg.view;
 
 // JavaObjClientView.java ObjecStram 기반 Client
 //실질적인 채팅 창
@@ -13,45 +13,48 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
-public class JavaGameClientView extends JFrame {
+import gamepkg.util.ChatMsg;
+import gamepkg.util.ComponentFactory;
+import gamepkg.network.ClientSocketHandler;
+import gamepkg.state.ClientState;
+
+public class MainView extends JFrame {
 
 	public static JLabel lblCharacter;
 	public static JLabel lblCoin;
+	public JScrollPane chatPane;
 	private String character = "src/images/Character1.png"; // 기본 캐릭터 지정
 	private String username;
 	private JPanel contentPane;
 	private JLabel lblUserName;
 	private JPanel topPane;
 	private JButton btnShop;
-	private JScrollPane chatPane;
 	private JTextField txtInput;
 
-	private NetworkListener networkListener;
-	public TextHandler viewTextHandler;
-	
-	public JavaGameClientView(String username, String ip_addr, String port_no) {
+	private ClientSocketHandler socketHandler;
+
+	public MainView(String username, String ip_addr, String port_no) {
 		this.username = username;
 		initWindow();
-		viewTextHandler = new TextHandler((JTextPane) chatPane.getViewport().getView());
-		
 		try {
 			// 서버에 연결
-			networkListener = new NetworkListener(ip_addr, port_no);
-			networkListener.start();
+			socketHandler = new ClientSocketHandler(ip_addr, port_no);
+			socketHandler.start();
 
 			// 프로토콜 : 100 -> 서버 (로그인)
 			ChatMsg obcm = new ChatMsg(username, "100", "Hello");
 			obcm.character = character;
-			networkListener.SendObject(obcm);
+			socketHandler.SendObject(obcm);
 
-			networkListener.setGameRobby(this);
+			socketHandler.setGameRobby(this);
+			socketHandler.stateManager.setState(ClientState.LOBBY);
+
 		} catch (NumberFormatException | IOException e) {
 			e.printStackTrace();
-			viewTextHandler.appendText("connect error");
+			socketHandler.textHandler.appendText("connect error");
 		}
 
 	}
@@ -116,13 +119,12 @@ public class JavaGameClientView extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// 문제점 : 대기방에 여러창 띄워놓은 다음 게임방에 들어갈때 오류남
-			JavaGameClientRoom room = new JavaGameClientRoom(username, character, networkListener);
-			networkListener.setGameRoom(room);
+			RoomView room = new RoomView(username, character, socketHandler);
 			setVisible(false);
 			ChatMsg obcm = new ChatMsg(username, "500", "Entry");
 			obcm.coin = Integer.valueOf(lblCoin.getText());
 			obcm.character = character;
-			networkListener.SendObject(obcm);
+			socketHandler.SendObject(obcm);
 
 		}
 	}
@@ -131,9 +133,9 @@ public class JavaGameClientView extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
-			JavaGameClientShop shop = new JavaGameClientShop(username, networkListener);
+			ShopView shop = new ShopView(username, socketHandler);
 			ChatMsg obcm = new ChatMsg(username, "300", "Shop");
-			networkListener.SendObject(obcm);
+			socketHandler.SendObject(obcm);
 			// setVisible(false);
 		}
 	}
@@ -147,7 +149,7 @@ public class JavaGameClientView extends JFrame {
 				String msg = null;
 
 				msg = txtInput.getText();
-				networkListener.SendMessage(username, "200", msg);
+				socketHandler.SendMessage(username, "200", msg);
 				txtInput.setText(""); // 메세지를 보내고 나면 메세지 쓰는창을 비운다.
 				txtInput.requestFocus(); // 메세지를 보내고 커서를 다시 텍스트 필드로 위치시킨다
 				if (msg.contains("/exit")) // 종료 처리
