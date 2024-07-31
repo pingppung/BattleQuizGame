@@ -9,7 +9,7 @@ public class Player {
 	private Room room;
 	private String name;
 	private String character;
-	private PlayerStatus.Status playerStatus;
+	private PlayerStatus.Status status;
 	private int coin; // 기본 코인
 	private Integer[] costume = new Integer[8];
 
@@ -18,6 +18,7 @@ public class Player {
 		this.character = character;
 		costume[0] = 1; // 첫번째 캐릭터는 기본 캐릭터
 		this.coin = 10;
+		this.status = PlayerStatus.Status.Robby;
 		// this.coin = c;
 	}
 
@@ -27,7 +28,7 @@ public class Player {
 	}
 
 	public void exitRoom(Room room) {
-		this.playerStatus = PlayerStatus.Status.Robby;
+		this.status = PlayerStatus.Status.Robby;
 		this.room = null;
 	}
 
@@ -39,12 +40,12 @@ public class Player {
 		return costume;
 	}
 
-	public PlayerStatus.Status getPlayerStatus() {
-		return playerStatus;
+	public PlayerStatus.Status getStatus() {
+		return status;
 	}
 
-	public void setPlayerStatus(PlayerStatus.Status status) { // 유저의 상태를 설정
-		this.playerStatus = status;
+	public void setStatus(PlayerStatus.Status status) { // 유저의 상태를 설정
+		this.status = status;
 	}
 
 	// 플레이어 비교

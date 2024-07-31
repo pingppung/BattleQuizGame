@@ -13,8 +13,10 @@ public class RoomManager {
     public static Room createRoom(Player player) {
         int roomId = atomicInteger.incrementAndGet();
         Room room = new Room(roomId, player);
-        room.enterPlayer(player); // 윗줄 방생성할때 미리 enterRoom 했음
+        room.addPlayer(player); // 윗줄 방생성할때 미리 enterRoom 했음
         roomList.add(room);
+
+		System.out.println("게임방 생성!");
         return room;
     }
 
@@ -36,8 +38,10 @@ public class RoomManager {
     }
 
     public static void removeRoom(Room room) {
-        room.close();
+        room.closeRoom();
         roomList.remove(room); // 전달받은 룸을 제거한다.
+
+		System.out.println("게임방 제거!");
     }
 
     public static int roomCount() {

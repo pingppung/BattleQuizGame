@@ -5,62 +5,49 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import gamepkg.GameManager;
+import gamepkg.network.UserManager;
+import gamepkg.network.UserService;
 import gamepkg.player.Player;
+import gamepkg.util.ChatMsg;
 
 public class Room {
 	private int id; // 룸 ID
-	private List playerList;
-	private String roomName; // 방 이름
-	private Map<String, Integer> rank = new HashMap<>();
-
-	public Room(int roomId) { // 유저가 방을 만들때
-		this.id = roomId;
-		playerList = new ArrayList();
-	}
-
+	private List<Player> playerList;
+	private UserManager userManager;
+	public GameManager gameManager;
+	
 	public Room(int roomId, Player player) { // 유저가 방을 만들때
 		playerList = new ArrayList();
 		this.id = roomId;
+		this.gameManager = new GameManager(this);
 		// player.enterRoom(this);
 		// playerList.add(player); // 유저를 추가시킨 후
 	}
 
-	public void enterPlayer(Player player) {
+	public void addPlayer(Player player) {
 		player.enterRoom(this);
 		playerList.add(player);
 	}
 
-	public boolean exitPlayer(Player player) {
-		player.exitRoom(this);
-		playerList.remove(player); // 해당 유저를 방에서 내보냄
-
-		if (playerList.size() < 1) { // 모든 인원이 다 방을 나갔다면
-			RoomManager.removeRoom(this); // 이 방을 제거한다.
-			return true; // 방을 제거하면 true를 리턴
+	public boolean removePlayer(Player player) {
+		if (playerList.remove(player)) {
+			player.exitRoom(this);
+			if (playerList.isEmpty()) {
+				RoomManager.removeRoom(this);
+				return true;
+			}
 		}
 		return false;
 	}
 
-	public void putRank(String player, int score) {
-		rank.put(player, score);
+	public void closeRoom() {
+		for (Player player : new ArrayList<>(playerList)) {
+            removePlayer(player);
+        }
 	}
 
-	public Map getRank() {
-		return rank;
-	}
-
-	public void close() {
-		if (playerList != null) { // playerList가 null인지 확인
-			for (int i = 0; i < playerList.size(); i++) {
-				Player player = (Player) playerList.get(i); // Player 객체 가져오기
-				player.exitRoom(this);
-			}
-			playerList.clear(); // 리스트 비우기
-			playerList = null; // playerList를 null로 설정
-		}
-	}
-
-	public int getPlayerSize() { // 유저의 수를 리턴
+	public int getPlayerCount() { // 유저의 수를 리턴
 		return playerList.size();
 	}
 
@@ -72,37 +59,52 @@ public class Room {
 		this.id = id;
 	}
 
-	public List getPlayerList() {
-		return playerList;
-	}
+	public List<Player> getPlayerList() {
+        return new ArrayList<>(playerList);
+    }
 
-	public void setPlayerList(List playerList) {
+	public void set1PlayerList(List playerList) {
 		this.playerList = playerList;
 	}
 
-	public Player getPlayerByName(String name) { // 닉네임을 통해서 방에 속한 유저를 리턴함
-		for (int i = 0; i < playerList.size(); i++) {
-			Player player = (Player) playerList.get(i);
-			// for (Player player : playerList) {
+	public Player findPlayerByName(String name) { // 닉네임을 통해서 방에 속한 유저를 리턴함
+		for (Player player : playerList) {
 			if (player.getName().equals(name)) {
 				return player; // 유저를 찾았다면
 			}
 		}
-		return null; // 찾는 유저가 없다면
+		return null;
 	}
 
+	public GameManager getGameManager() {
+		return gameManager;
+	}
+
+	public void checkAndStartGame() {
+        if (gameManager.allPlayersReady()) {
+            gameManager.startGame(); // 모든 플레이어가 레디 상태이면 퀴즈 시작
+        }
+	}
+	public void setUserManager(UserManager userManager) {
+        this.userManager = userManager;
+    }
+	 // 같은 방에 있는 모든 사용자에게 메시지 전송
+    public void sendMessageToAll(ChatMsg cm) {
+        userManager.writeRoom(this, cm);
+    }
+	@Override
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-
-		Room gameRoom = (Room) o;
-
-		return id == gameRoom.id;
+		Room room = (Room) o;
+		return id == room.id;
 	}
 
+	@Override
 	public int hashCode() {
-		return id;
+		return Integer.hashCode(id);
 	}
+
 }

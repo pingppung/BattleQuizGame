@@ -43,7 +43,6 @@ public class MainView extends JFrame {
 			// 서버에 연결
 			socketHandler = new ClientSocketHandler(ip_addr, port_no);
 			socketHandler.start();
-
 			// 프로토콜 : 100 -> 서버 (로그인)
 			ChatMsg obcm = new ChatMsg(username, "100", "Hello");
 			obcm.character = character;

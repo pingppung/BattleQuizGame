@@ -184,29 +184,28 @@ public class RoomView extends JFrame {
 		contentPane.add(QuizPane);
 	}
 
-	public void Restart() {
-		QuizPane.setVisible(false);
-		btn_Ready.setText("준비완료");
-		btn_Ready.setVisible(true);
-		btn_Exit.setVisible(true);
-		timebar.setVisible(false);
-		lblTime.setVisible(false);
-		for (int i = 0; i < 4; i++) {
-			rank[i].setVisible(false);
-
-			lblScore[i].setText("0");
-			lblScore[i].setVisible(false);
-
-			lblUserReady[i].setVisible(false);
-
-		}
-	}
+//	public void Restart() {
+//		QuizPane.setVisible(false);
+//		btn_Ready.setText("준비완료");
+//		btn_Ready.setVisible(true);
+//		btn_Exit.setVisible(true);
+//		timebar.setVisible(false);
+//		lblTime.setVisible(false);
+//		for (int i = 0; i < 4; i++) {
+//			rank[i].setVisible(false);
+//
+//			lblScore[i].setText("0");
+//			lblScore[i].setVisible(false);
+//
+//			lblUserReady[i].setVisible(false);
+//
+//		}
+//	}
 
 	// Player가 게임방에서 레디 or 대기 버튼 눌렀을때
 	class ReadyButtonClick implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			System.out.println(username);
 			ChatMsg obcm = new ChatMsg(username, "550", btn_Ready.getText()); // ready변경사항 서버에 보내기 (다른 유저들 화면에서 띄우게)
 			if (btn_Ready.getText().equals("준비완료")) { // 대기 -> 레디 상태
 				btn_Ready.setText("준비취소");

@@ -80,10 +80,10 @@ public class ShopView extends JFrame {
 				ImageIcon update_icon = new ImageIcon(route);
 				MainView.lblCharacter.setIcon(update_icon);
 
-				obcm = new ChatMsg(username, "300", route);
+				obcm = new ChatMsg(username, "350", route);
 
 			} else if (e.getActionCommand().equals("구매")) {// 캐릭터 구매 - 구매할 떄는 구매할 캐릭터 번호 cm.data로 보내기
-				obcm = new ChatMsg(username, "300", o.getName());
+				obcm = new ChatMsg(username, "350", o.getName());
 
 			}
 			networkListener.SendObject(obcm);

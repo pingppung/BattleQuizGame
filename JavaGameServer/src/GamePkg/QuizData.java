@@ -1,6 +1,6 @@
 package gamepkg;
 
-public class JavaGameServerQuiz {
+public class QuizData {
 	String type; // 객관식 퀴즈, ox퀴즈, 주관식 등
 	String quiz;
 	String choice;
